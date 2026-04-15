@@ -55,8 +55,8 @@ Restart your DAW after installation.
 ## OSC Address Format
 
 ```
-**CARTESIAN** : /adm/obj/<id>  x y z
-**POLAR** : /adm/obj/<id> a e d
+**CARTESIAN** : /adm/obj/<id>/xyz  x y z
+**POLAR** : /adm/obj/<id>/aed a e d
 ```
 
 ## License
