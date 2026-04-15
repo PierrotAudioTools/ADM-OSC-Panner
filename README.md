@@ -10,7 +10,7 @@ Receive, transmit and record ADM-OSC messages from any compatible DAW. Designed 
 
 ## Features
 
-- **OSC input** — listen on a configurable port (default: 9000)
+- **OSC input** — Create an ADM-OSC Server (default: 9000)
 - **OSC output** — send to any IP and port (default: 127.0.0.1:9001)
 - **ADM-OSC protocol** — Cartesian and Polar coordinate formats
 - **Object-based positioning** — per-object XYZ control
@@ -47,12 +47,16 @@ Restart your DAW after installation.
 3. Set **OSC Out IP / Port** to your destination (default: 127.0.0.1:9001)
 4. Select the **Object** number
 5. Move the XYZ position — the Top and Rear views update in real time
-6. Automate X, Y, Z in your DAW timeline to record movement
+6. Automate X, Y, Z in your DAW timeline to record and playback movement
+7. Disable / Enable OSC input or output by clicking on "OSC In" or "OSC Out" in the OSC tab
+8. When multiple instances share the same OSC input port, they automatically form a **HUB**: only one instance listens on the port and redistributes the incoming messages to all others.
+9. When used in Polar mode, the plugin automatically converts the incoming polar coordinates to Cartesian before processing.
 
 ## OSC Address Format
 
 ```
-/adm/obj/<id>/cartesian  x y z
+**CARTESIAN** : /adm/obj/<id>  x y z
+**POLAR** : /adm/obj/<id> a e d
 ```
 
 ## License
