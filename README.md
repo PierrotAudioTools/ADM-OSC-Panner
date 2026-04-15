@@ -25,7 +25,7 @@ Receive, transmit and record ADM-OSC messages from any compatible DAW. Designed 
 
 ## Installation
 
-Download the installer for your format from the [Releases](../../releases) page:
+Download the installer from the [Releases](../../releases) page:
 
 | Installer | Format |
 |-----------|--------|
@@ -61,7 +61,7 @@ Restart your DAW after installation.
 
 ## License
 
-Closed source — all rights reserved. Free to use for personal and professional projects.
+Closed source — all rights reserved. 
 
 ---
 
