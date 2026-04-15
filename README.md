@@ -4,7 +4,7 @@
 
 Receive, transmit and record ADM-OSC messages from any compatible DAW. Designed for immersive audio workflows using the [ADM-OSC](https://immersive-audio-live.github.io/ADM-OSC/) open protocol.
 
-![ADM-OSC Panner](Assets/ADM-OSC%20Panner-fullview.png)
+<img src="Assets/ADM-OSC%20Panner-fullview.png" width="400" alt="ADM-OSC Panner" />
 
 ---
 
