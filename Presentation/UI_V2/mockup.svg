@@ -1,0 +1,76 @@
+<svg width="1200" height="1500" viewBox="0 0 1200 1500" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0B1117"/>
+      <stop offset="100%" stop-color="#05070A"/>
+    </linearGradient>
+    <linearGradient id="card" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#13202C"/>
+      <stop offset="100%" stop-color="#0F1821"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="1500" fill="url(#bg)"/>
+
+  <rect x="24" y="24" rx="28" ry="28" width="1152" height="96" fill="url(#card)" stroke="#3B5066"/>
+  <text x="60" y="83" fill="#EAF2FA" font-size="38" font-family="Helvetica,Arial,sans-serif" font-weight="700">ADM-OSC PANNER</text>
+  <rect x="475" y="46" rx="16" ry="16" width="250" height="50" fill="#0B1117" stroke="#39D8FF"/>
+  <text x="500" y="79" fill="#39D8FF" font-size="27" font-family="monospace" font-weight="700">OBJECT 12</text>
+  <circle cx="1030" cy="62" r="10" fill="#4DFFB1"/>
+  <text x="1050" y="70" fill="#8EA3B8" font-size="20" font-family="Helvetica,Arial,sans-serif">RX</text>
+  <circle cx="1030" cy="94" r="10" fill="#34D8AF"/>
+  <text x="1050" y="102" fill="#8EA3B8" font-size="20" font-family="Helvetica,Arial,sans-serif">TX</text>
+
+  <rect x="24" y="142" rx="24" ry="24" width="1152" height="320" fill="url(#card)" stroke="#2A394A"/>
+  <text x="60" y="190" fill="#EAF2FA" font-size="30" font-family="Helvetica,Arial,sans-serif" font-weight="700">OSC CONTROL</text>
+
+  <text x="60" y="250" fill="#8EA3B8" font-size="22" font-family="Helvetica,Arial,sans-serif">OSC IN</text>
+  <rect x="190" y="220" rx="14" ry="14" width="90" height="40" fill="#39D8FF"/>
+  <text x="222" y="247" fill="#051017" font-size="20" font-family="Helvetica,Arial,sans-serif" font-weight="700">ON</text>
+  <rect x="305" y="220" rx="10" ry="10" width="170" height="40" fill="#0B1117" stroke="#3B5066"/>
+  <text x="355" y="246" fill="#EAF2FA" font-size="21" font-family="monospace">9000</text>
+
+  <text x="60" y="315" fill="#8EA3B8" font-size="22" font-family="Helvetica,Arial,sans-serif">OSC OUT</text>
+  <rect x="190" y="285" rx="14" ry="14" width="90" height="40" fill="#39D8FF"/>
+  <text x="222" y="312" fill="#051017" font-size="20" font-family="Helvetica,Arial,sans-serif" font-weight="700">ON</text>
+  <rect x="305" y="285" rx="10" ry="10" width="330" height="40" fill="#0B1117" stroke="#3B5066"/>
+  <text x="330" y="311" fill="#EAF2FA" font-size="21" font-family="monospace">127.0.0.1</text>
+  <rect x="650" y="285" rx="10" ry="10" width="140" height="40" fill="#0B1117" stroke="#3B5066"/>
+  <text x="695" y="311" fill="#EAF2FA" font-size="21" font-family="monospace">9001</text>
+
+  <text x="60" y="380" fill="#8EA3B8" font-size="22" font-family="Helvetica,Arial,sans-serif">FORMAT</text>
+  <rect x="190" y="350" rx="14" ry="14" width="380" height="44" fill="#0B1117" stroke="#3B5066"/>
+  <rect x="194" y="354" rx="12" ry="12" width="184" height="36" fill="#132F3A" stroke="#39D8FF"/>
+  <text x="228" y="379" fill="#39D8FF" font-size="20" font-family="Helvetica,Arial,sans-serif" font-weight="700">CARTESIAN</text>
+  <text x="410" y="379" fill="#8EA3B8" font-size="20" font-family="Helvetica,Arial,sans-serif" font-weight="700">POLAR</text>
+
+  <rect x="24" y="484" rx="24" ry="24" width="1152" height="620" fill="url(#card)" stroke="#2A394A"/>
+  <text x="60" y="532" fill="#EAF2FA" font-size="30" font-family="Helvetica,Arial,sans-serif" font-weight="700">SPACE</text>
+
+  <rect x="60" y="560" rx="26" ry="26" width="640" height="500" fill="#0B1117" stroke="#3B5066"/>
+  <line x1="380" y1="600" x2="380" y2="1020" stroke="#2A394A" stroke-width="2"/>
+  <line x1="100" y1="810" x2="660" y2="810" stroke="#2A394A" stroke-width="2"/>
+  <circle cx="430" cy="760" r="18" fill="#39D8FF"/>
+  <circle cx="430" cy="760" r="42" fill="none" stroke="#39D8FF" opacity="0.35"/>
+
+  <rect x="730" y="560" rx="22" ry="22" width="410" height="500" fill="#0B1117" stroke="#3B5066"/>
+  <line x1="935" y1="600" x2="935" y2="1020" stroke="#2A394A" stroke-width="2"/>
+  <line x1="770" y1="810" x2="1100" y2="810" stroke="#2A394A" stroke-width="2"/>
+  <circle cx="885" cy="700" r="16" fill="#34D8AF"/>
+
+  <rect x="24" y="1126" rx="24" ry="24" width="1152" height="350" fill="url(#card)" stroke="#2A394A"/>
+  <text x="60" y="1174" fill="#EAF2FA" font-size="30" font-family="Helvetica,Arial,sans-serif" font-weight="700">MOTION</text>
+
+  <text x="60" y="1244" fill="#8EA3B8" font-size="22" font-family="Helvetica,Arial,sans-serif">CIRCLE</text>
+  <rect x="180" y="1214" rx="14" ry="14" width="90" height="40" fill="#39D8FF"/>
+  <text x="212" y="1241" fill="#051017" font-size="20" font-family="Helvetica,Arial,sans-serif" font-weight="700">ON</text>
+
+  <text x="320" y="1244" fill="#8EA3B8" font-size="22" font-family="Helvetica,Arial,sans-serif">RADIUS</text>
+  <rect x="430" y="1228" rx="8" ry="8" width="320" height="10" fill="#2A394A"/>
+  <rect x="430" y="1228" rx="8" ry="8" width="190" height="10" fill="#FFB14A"/>
+  <circle cx="620" cy="1233" r="14" fill="#FFB14A"/>
+
+  <text x="790" y="1244" fill="#8EA3B8" font-size="22" font-family="Helvetica,Arial,sans-serif">TIME</text>
+  <rect x="870" y="1214" rx="12" ry="12" width="220" height="40" fill="#0B1117" stroke="#3B5066"/>
+  <text x="946" y="1241" fill="#EAF2FA" font-size="20" font-family="Helvetica,Arial,sans-serif">1/4</text>
+</svg>

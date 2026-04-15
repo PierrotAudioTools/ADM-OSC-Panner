@@ -1,0 +1,153 @@
+# ninja log v7
+3	42	1776097863644616405	/Users/pierreu/Documents/9_Dev/3_VST/ADM-OSC_Panner_V1/build/CMakeFiles/cmake.verify_globs	7bcce09a6e004103
+28	91	1761747760657970847	CMakeFiles/ADM_OSC_Music_Panner.dir/_deps/juce-src/modules/juce_audio_processors/juce_audio_processors_lv2_libs.cpp.o	807377307abe910d
+29	91	1761747760659236184	CMakeFiles/ADM_OSC_Music_Panner.dir/_deps/juce-src/modules/juce_core/juce_core_CompilationTime.cpp.o	1f5869eb48d843b6
+28	96	1761747760657877264	CMakeFiles/ADM_OSC_Music_Panner.dir/_deps/juce-src/modules/juce_audio_processors/juce_audio_processors_ara.cpp.o	1596d6ebca252517
+28	661	1761747760658646516	CMakeFiles/ADM_OSC_Music_Panner.dir/_deps/juce-src/modules/juce_graphics/juce_graphics_Sheenbidi.c.o	fa24e019500919f6
+96	2253	1761747760726328833	CMakeFiles/ADM_OSC_Music_Panner.dir/_deps/juce-src/modules/juce_osc/juce_osc.cpp.o	b8b940339e7c68d1
+30	2682	1761747760660872439	CMakeFiles/ADM_OSC_Music_Panner.dir/_deps/juce-src/modules/juce_data_structures/juce_data_structures.mm.o	f4d36299594674a1
+55	2741	1776097670489278296	CMakeFiles/ADM_OSC_Music_Panner.dir/Source/PluginProcessor.cpp.o	5238429ed8a8e3d4
+29	3935	1761747760658909558	CMakeFiles/ADM_OSC_Music_Panner.dir/_deps/juce-src/modules/juce_events/juce_events.mm.o	5b1d27caeb492261
+55	2489	1776097731967598624	CMakeFiles/ADM_OSC_Music_Panner.dir/Source/PluginEditor.cpp.o	c7aeb67cfc3255f7
+662	5287	1761747761291929609	CMakeFiles/juce_vst3_helper.dir/_deps/juce-src/modules/juce_audio_plugin_client/VST3/juce_VST3ManifestHelper.mm.o	cd326c8b3454baf7
+5287	5502	1761747765917332595	juce_vst3_helper	e006d01d97294b06
+91	5945	1761747760721370486	CMakeFiles/ADM_OSC_Music_Panner.dir/_deps/juce-src/modules/juce_audio_devices/juce_audio_devices.mm.o	6b6e9fe502c15b8f
+33	6721	1761747760663522530	CMakeFiles/ADM_OSC_Music_Panner.dir/_deps/juce-src/modules/juce_audio_utils/juce_audio_utils.mm.o	c9e837182b5ecd00
+32	6894	1761747760662186151	CMakeFiles/ADM_OSC_Music_Panner.dir/_deps/juce-src/modules/juce_audio_basics/juce_audio_basics.mm.o	4fc1a068ae8385cd
+28	10433	1761747760658153848	CMakeFiles/ADM_OSC_Music_Panner.dir/_deps/juce-src/modules/juce_gui_extra/juce_gui_extra.mm.o	aaa67a67822b724c
+28	11059	1761747760658062223	CMakeFiles/ADM_OSC_Music_Panner.dir/_deps/juce-src/modules/juce_audio_processors/juce_audio_processors.mm.o	6c398f22c392c448
+91	11071	1761747760721055777	CMakeFiles/ADM_OSC_Music_Panner.dir/_deps/juce-src/modules/juce_audio_formats/juce_audio_formats.mm.o	e7b28c3502090e96
+29	14035	1761747760659393018	CMakeFiles/ADM_OSC_Music_Panner.dir/_deps/juce-src/modules/juce_core/juce_core.mm.o	13666a8f33cc1ee0
+29	19797	1761747760658767433	CMakeFiles/ADM_OSC_Music_Panner.dir/_deps/juce-src/modules/juce_graphics/juce_graphics.mm.o	d8d5eab6eda425a2
+28	20998	1761747760658529599	CMakeFiles/ADM_OSC_Music_Panner.dir/_deps/juce-src/modules/juce_graphics/juce_graphics_Harfbuzz.cpp.o	2c043f4aa429219
+28	31711	1761747760658375099	CMakeFiles/ADM_OSC_Music_Panner.dir/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics.mm.o	b212c8173aaa8fff
+2489	2566	1776097734402047096	ADM_OSC_Music_Panner_artefacts/Release/libADM-OSC Panner_SharedCode.a	59545f2f792cd05d
+31785	31838	1761747792467907093	ADM_OSC_Music_Panner_artefacts/JuceLibraryCode/ADM_OSC_Music_Panner_VST3/PkgInfo	7bb08f4876eb7567
+31785	31838	1761747792467907093	/Users/pierreu/Documents/9_Dev/3_VST/ADM-OSC_Panner_V1/build/ADM_OSC_Music_Panner_artefacts/JuceLibraryCode/ADM_OSC_Music_Panner_VST3/PkgInfo	7bb08f4876eb7567
+31784	31840	1761747792467908093	ADM_OSC_Music_Panner_artefacts/JuceLibraryCode/ADM_OSC_Music_Panner_AU/PkgInfo	9386b1d4a189caca
+31784	31840	1761747792467908093	/Users/pierreu/Documents/9_Dev/3_VST/ADM-OSC_Panner_V1/build/ADM_OSC_Music_Panner_artefacts/JuceLibraryCode/ADM_OSC_Music_Panner_AU/PkgInfo	9386b1d4a189caca
+31840	31888	1761747792469924641	CMakeFiles/ADM_OSC_Music_Panner_VST3.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_LV2.mm.o	2a528fa8f06319de
+31841	31891	1761747792471487728	CMakeFiles/ADM_OSC_Music_Panner_AU.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_Unity.cpp.o	c49c988be6970fa9
+31838	31893	1761747792468777346	CMakeFiles/ADM_OSC_Music_Panner_VST3.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_AAX_utils.cpp.o	61bd8dc8875a022b
+31839	31896	1761747792469088930	CMakeFiles/ADM_OSC_Music_Panner_VST3.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_Standalone.cpp.o	adc23f0d2126f87d
+31839	31897	1761747792469363139	CMakeFiles/ADM_OSC_Music_Panner_VST3.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_AAX.mm.o	49d68bbfe68e0f6b
+31842	31897	1761747792471968021	CMakeFiles/ADM_OSC_Music_Panner_AU.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_AAX.mm.o	c711bf6316807957
+31839	31899	1761747792468972055	CMakeFiles/ADM_OSC_Music_Panner_VST3.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_ARA.cpp.o	add22e824f56d473
+31839	31899	1761747792469695932	CMakeFiles/ADM_OSC_Music_Panner_VST3.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_AU_2.mm.o	113524c4f65d72c1
+31839	31899	1761747792469812307	CMakeFiles/ADM_OSC_Music_Panner_VST3.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_AUv3.mm.o	ec0debd3a5aec2db
+31840	31899	1761747792470771184	CMakeFiles/ADM_OSC_Music_Panner_AU.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_ARA.cpp.o	79ac203f3ebc7db6
+31841	31901	1761747792471066518	CMakeFiles/ADM_OSC_Music_Panner_AU.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_Standalone.cpp.o	811df073e5f1a2cb
+31839	31902	1761747792469195097	CMakeFiles/ADM_OSC_Music_Panner_VST3.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_Unity.cpp.o	e4274af76d1af712
+31840	31902	1761747792470048475	CMakeFiles/ADM_OSC_Music_Panner_VST3.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_VST2.mm.o	b445f6c4343b9ffb
+31840	31908	1761747792470613101	CMakeFiles/ADM_OSC_Music_Panner_AU.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_AAX_utils.cpp.o	4864e413acc9cbf7
+31839	31908	1761747792469564765	CMakeFiles/ADM_OSC_Music_Panner_VST3.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_AU_1.mm.o	3ccbd27fda169af7
+31896	31926	1761747792526516134	CMakeFiles/ADM_OSC_Music_Panner_AU.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_LV2.mm.o	7f5379d20b2be702
+31894	31928	1761747792523854418	CMakeFiles/ADM_OSC_Music_Panner_AU.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_AUv3.mm.o	2c03388445096574
+31897	31929	1761747792526956344	CMakeFiles/ADM_OSC_Music_Panner_AU.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_VST2.mm.o	7916bd6c4df46e3f
+31897	31930	1761747792527569887	CMakeFiles/ADM_OSC_Music_Panner_AU.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_VST3.mm.o	8ce79deb986c569d
+31892	33746	1761747792521996580	CMakeFiles/ADM_OSC_Music_Panner_AU.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_AU_2.mm.o	981a49e8093deb3d
+31888	36070	1761747792518367611	CMakeFiles/ADM_OSC_Music_Panner_AU.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_AU_1.mm.o	d76037072be06dc9
+2566	2873	1776097734479207053	ADM_OSC_Music_Panner_artefacts/Release/AU/ADM-OSC Panner.component/Contents/MacOS/ADM-OSC Panner	c7524f9e05a99e3a
+31840	39994	1761747792470244809	CMakeFiles/ADM_OSC_Music_Panner_VST3.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_VST3.mm.o	ba0ead431e8f0181
+2566	3037	1776097734479400931	ADM_OSC_Music_Panner_artefacts/Release/VST3/ADM-OSC Panner.vst3/Contents/MacOS/ADM-OSC Panner	96dd2e595a148902
+42	840	1776097864476542781	build.ninja	48634700e747b0b
+42	840	1776097864476542781	/Users/pierreu/Documents/9_Dev/3_VST/ADM-OSC_Panner_V1/build/cmake_install.cmake	48634700e747b0b
+42	840	1776097864476542781	/Users/pierreu/Documents/9_Dev/3_VST/ADM-OSC_Panner_V1/build/_deps/juce-build/cmake_install.cmake	48634700e747b0b
+42	840	1776097864476542781	/Users/pierreu/Documents/9_Dev/3_VST/ADM-OSC_Panner_V1/build/_deps/juce-build/modules/cmake_install.cmake	48634700e747b0b
+42	840	1776097864476542781	/Users/pierreu/Documents/9_Dev/3_VST/ADM-OSC_Panner_V1/build/_deps/juce-build/extras/Build/cmake_install.cmake	48634700e747b0b
+42	840	1776097864476542781	/Users/pierreu/Documents/9_Dev/3_VST/ADM-OSC_Panner_V1/build/_deps/juce-build/extras/Build/juceaide/cmake_install.cmake	48634700e747b0b
+2	32	1776097864483097262	/Users/pierreu/Documents/9_Dev/3_VST/ADM-OSC_Panner_V1/build/CMakeFiles/cmake.verify_globs	7bcce09a6e004103
+48	83	1776097864529732225	CMakeFiles/ADM_OSC_Music_Panner.dir/_deps/juce-src/modules/juce_audio_processors/juce_audio_processors_lv2_libs.cpp.o	9a8bb203bdf1af5f
+46	87	1776097864527527856	CMakeFiles/ADM_OSC_Music_Panner.dir/_deps/juce-src/modules/juce_audio_processors/juce_audio_processors_ara.cpp.o	fafbb7e09d7e8acc
+46	2749	1776097864527417146	CMakeFiles/ADM_OSC_Music_Panner.dir/Source/PluginEditor.cpp.o	5c69788c9498f3ea
+46	2886	1776097864527175434	CMakeFiles/ADM_OSC_Music_Panner.dir/Source/PluginProcessor.cpp.o	e6acf810cb43dc17
+87	8858	1776097864568254307	CMakeFiles/ADM_OSC_Music_Panner.dir/_deps/juce-src/modules/juce_gui_extra/juce_gui_extra.mm.o	ddb5db4be08ad318
+83	9168	1776097864564138198	CMakeFiles/ADM_OSC_Music_Panner.dir/_deps/juce-src/modules/juce_audio_processors/juce_audio_processors.mm.o	58b907ee59f0520
+8860	9944	1776097873341037619	CMakeFiles/ADM_OSC_Music_Panner.dir/_deps/juce-src/modules/juce_graphics/juce_graphics_Sheenbidi.c.o	6e0551622cdd98f9
+9944	12857	1776097874425333412	CMakeFiles/ADM_OSC_Music_Panner.dir/_deps/juce-src/modules/juce_events/juce_events.mm.o	9befb6a989cf191b
+12857	12888	1776097877338837467	CMakeFiles/ADM_OSC_Music_Panner.dir/_deps/juce-src/modules/juce_core/juce_core_CompilationTime.cpp.o	4c28a2786c279832
+2887	25752	1776097867367780684	CMakeFiles/ADM_OSC_Music_Panner.dir/_deps/juce-src/modules/juce_graphics/juce_graphics_Harfbuzz.cpp.o	1e8480f222e53ddd
+12888	27066	1776097877369859011	CMakeFiles/ADM_OSC_Music_Panner.dir/_deps/juce-src/modules/juce_core/juce_core.mm.o	93279a92b5a8ee7b
+25752	27697	1776097890234087728	CMakeFiles/ADM_OSC_Music_Panner.dir/_deps/juce-src/modules/juce_data_structures/juce_data_structures.mm.o	7489095bae953dd
+9168	29941	1776097873649491235	CMakeFiles/ADM_OSC_Music_Panner.dir/_deps/juce-src/modules/juce_graphics/juce_graphics.mm.o	38d76597aac33ace
+27697	32793	1776097892179070822	CMakeFiles/ADM_OSC_Music_Panner.dir/_deps/juce-src/modules/juce_audio_utils/juce_audio_utils.mm.o	21e9849744674850
+27066	33166	1776097891547913402	CMakeFiles/ADM_OSC_Music_Panner.dir/_deps/juce-src/modules/juce_audio_basics/juce_audio_basics.mm.o	1951427dd6166d58
+33167	34755	1776097897648289477	CMakeFiles/ADM_OSC_Music_Panner.dir/_deps/juce-src/modules/juce_osc/juce_osc.cpp.o	d042ef5598a41b79
+2749	36747	1776097867230137457	CMakeFiles/ADM_OSC_Music_Panner.dir/_deps/juce-src/modules/juce_gui_basics/juce_gui_basics.mm.o	d735155e4a785f30
+32793	37647	1776097897274946811	CMakeFiles/ADM_OSC_Music_Panner.dir/_deps/juce-src/modules/juce_audio_devices/juce_audio_devices.mm.o	6fb0da2cf5f761f9
+29941	40267	1776097894422400784	CMakeFiles/ADM_OSC_Music_Panner.dir/_deps/juce-src/modules/juce_audio_formats/juce_audio_formats.mm.o	eb48d625cb21ca35
+40267	40350	1776097904748511896	ADM_OSC_Music_Panner_artefacts/Release/libADM-OSC Panner_SharedCode.a	59545f2f792cd05d
+40350	40388	1776097904831841285	CMakeFiles/ADM_OSC_Music_Panner_AU.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_AAX_utils.cpp.o	4ddbb9d93db03c55
+40350	40388	1776097904832086664	CMakeFiles/ADM_OSC_Music_Panner_AU.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_Standalone.cpp.o	583ee8802d26f193
+40351	40388	1776097904832408669	CMakeFiles/ADM_OSC_Music_Panner_AU.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_Unity.cpp.o	900fbe59f9ca0585
+40350	40389	1776097904831988370	CMakeFiles/ADM_OSC_Music_Panner_AU.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_ARA.cpp.o	a66a83856cdb91b0
+40388	40426	1776097904869726856	CMakeFiles/ADM_OSC_Music_Panner_AU.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_AAX.mm.o	3efd0123f6e0ac15
+40389	40426	1776097904870419617	CMakeFiles/ADM_OSC_Music_Panner_AU.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_AUv3.mm.o	e12a78b1af4059e9
+40426	40456	1776097904908056268	CMakeFiles/ADM_OSC_Music_Panner_AU.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_LV2.mm.o	c22ce01a91e40fd5
+40426	40459	1776097904908271563	CMakeFiles/ADM_OSC_Music_Panner_AU.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_VST2.mm.o	791be44dbb781932
+40459	40489	1776097904940626378	CMakeFiles/ADM_OSC_Music_Panner_VST3.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_AAX_utils.cpp.o	4fa3f442deac3b3a
+40456	40490	1776097904937666580	CMakeFiles/ADM_OSC_Music_Panner_AU.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_VST3.mm.o	3b956f93e3c71758
+40490	40523	1776097904971788341	CMakeFiles/ADM_OSC_Music_Panner_VST3.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_Standalone.cpp.o	60e38fa460462110
+40489	40525	1776097904971347042	CMakeFiles/ADM_OSC_Music_Panner_VST3.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_ARA.cpp.o	35b662631fe3dace
+40523	40557	1776097905005005545	CMakeFiles/ADM_OSC_Music_Panner_VST3.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_Unity.cpp.o	87985f92afc38989
+40525	40557	1776097905007038869	CMakeFiles/ADM_OSC_Music_Panner_VST3.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_AAX.mm.o	3875987bc08b337
+40557	40591	1776097905038801133	CMakeFiles/ADM_OSC_Music_Panner_VST3.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_AU_1.mm.o	5b60c4a968bb4bd1
+40557	40591	1776097905039016012	CMakeFiles/ADM_OSC_Music_Panner_VST3.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_AU_2.mm.o	b711b2e2cc62b399
+40591	40621	1776097905072856851	CMakeFiles/ADM_OSC_Music_Panner_VST3.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_LV2.mm.o	13782813076cfede
+40591	40624	1776097905072608180	CMakeFiles/ADM_OSC_Music_Panner_VST3.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_AUv3.mm.o	4d77082b34a602f7
+40621	40654	1776097905102604707	CMakeFiles/ADM_OSC_Music_Panner_VST3.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_VST2.mm.o	9d8b71621bd46f7
+40388	42485	1776097904870193405	CMakeFiles/ADM_OSC_Music_Panner_AU.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_AU_2.mm.o	7377689374f3e2c2
+40388	44730	1776097904869943568	CMakeFiles/ADM_OSC_Music_Panner_AU.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_AU_1.mm.o	e871d5856c093731
+44730	45021	1776097909211931860	ADM_OSC_Music_Panner_artefacts/Release/AU/ADM-OSC Panner.component/Contents/MacOS/ADM-OSC Panner	c7524f9e05a99e3a
+40624	49795	1776097905105819260	CMakeFiles/ADM_OSC_Music_Panner_VST3.dir/_deps/juce-src/modules/juce_audio_plugin_client/juce_audio_plugin_client_VST3.mm.o	a7767af9835865a3
+49795	50272	1776097914277303939	ADM_OSC_Music_Panner_artefacts/Release/VST3/ADM-OSC Panner.vst3/Contents/MacOS/ADM-OSC Panner	96dd2e595a148902
+4	42	1776098491930903018	/Users/pierreu/Documents/9_Dev/3_VST/ADM-OSC_Panner_V1/build/CMakeFiles/cmake.verify_globs	7bcce09a6e004103
+61	2678	1776098491987950899	CMakeFiles/ADM_OSC_Music_Panner.dir/Source/PluginEditor.cpp.o	5c69788c9498f3ea
+60	2795	1776098491987709729	CMakeFiles/ADM_OSC_Music_Panner.dir/Source/PluginProcessor.cpp.o	e6acf810cb43dc17
+2795	2874	1776098494722078970	ADM_OSC_Music_Panner_artefacts/Release/libADM-OSC Panner_SharedCode.a	59545f2f792cd05d
+2874	3186	1776098494801098248	ADM_OSC_Music_Panner_artefacts/Release/AU/ADM-OSC Panner.component/Contents/MacOS/ADM-OSC Panner	c7524f9e05a99e3a
+2874	3345	1776098494801283751	ADM_OSC_Music_Panner_artefacts/Release/VST3/ADM-OSC Panner.vst3/Contents/MacOS/ADM-OSC Panner	96dd2e595a148902
+4	41	1776098726324252049	/Users/pierreu/Documents/9_Dev/3_VST/ADM-OSC_Panner_V1/build/CMakeFiles/cmake.verify_globs	7bcce09a6e004103
+60	2541	1776098726380049869	CMakeFiles/ADM_OSC_Music_Panner.dir/Source/PluginEditor.cpp.o	5c69788c9498f3ea
+60	2672	1776098726379808740	CMakeFiles/ADM_OSC_Music_Panner.dir/Source/PluginProcessor.cpp.o	e6acf810cb43dc17
+2672	2742	1776098728992053587	ADM_OSC_Music_Panner_artefacts/Release/libADM-OSC Panner_SharedCode.a	59545f2f792cd05d
+2742	3053	1776098729062021428	ADM_OSC_Music_Panner_artefacts/Release/AU/ADM-OSC Panner.component/Contents/MacOS/ADM-OSC Panner	c7524f9e05a99e3a
+2742	3215	1776098729062229014	ADM_OSC_Music_Panner_artefacts/Release/VST3/ADM-OSC Panner.vst3/Contents/MacOS/ADM-OSC Panner	96dd2e595a148902
+4	43	1776098913730159648	/Users/pierreu/Documents/9_Dev/3_VST/ADM-OSC_Panner_V1/build/CMakeFiles/cmake.verify_globs	7bcce09a6e004103
+62	2661	1776098913787786164	CMakeFiles/ADM_OSC_Music_Panner.dir/Source/PluginEditor.cpp.o	5c69788c9498f3ea
+61	2768	1776098913787520243	CMakeFiles/ADM_OSC_Music_Panner.dir/Source/PluginProcessor.cpp.o	e6acf810cb43dc17
+2768	2849	1776098916494525707	ADM_OSC_Music_Panner_artefacts/Release/libADM-OSC Panner_SharedCode.a	59545f2f792cd05d
+2849	3158	1776098916574828381	ADM_OSC_Music_Panner_artefacts/Release/AU/ADM-OSC Panner.component/Contents/MacOS/ADM-OSC Panner	c7524f9e05a99e3a
+2849	3320	1776098916575109386	ADM_OSC_Music_Panner_artefacts/Release/VST3/ADM-OSC Panner.vst3/Contents/MacOS/ADM-OSC Panner	96dd2e595a148902
+3	43	1776099110840830305	/Users/pierreu/Documents/9_Dev/3_VST/ADM-OSC_Panner_V1/build/CMakeFiles/cmake.verify_globs	7bcce09a6e004103
+62	2613	1776099110899235957	CMakeFiles/ADM_OSC_Music_Panner.dir/Source/PluginEditor.cpp.o	5c69788c9498f3ea
+61	2716	1776099110898901118	CMakeFiles/ADM_OSC_Music_Panner.dir/Source/PluginProcessor.cpp.o	e6acf810cb43dc17
+2716	2786	1776099113553699447	ADM_OSC_Music_Panner_artefacts/Release/libADM-OSC Panner_SharedCode.a	59545f2f792cd05d
+2786	3157	1776099113623215072	ADM_OSC_Music_Panner_artefacts/Release/AU/ADM-OSC Panner.component/Contents/MacOS/ADM-OSC Panner	c7524f9e05a99e3a
+2786	3323	1776099113623395449	ADM_OSC_Music_Panner_artefacts/Release/VST3/ADM-OSC Panner.vst3/Contents/MacOS/ADM-OSC Panner	96dd2e595a148902
+3	42	1776099128820021362	/Users/pierreu/Documents/9_Dev/3_VST/ADM-OSC_Panner_V1/build/CMakeFiles/cmake.verify_globs	7bcce09a6e004103
+60	2604	1776099128877001659	CMakeFiles/ADM_OSC_Music_Panner.dir/Source/PluginProcessor.cpp.o	e6acf810cb43dc17
+2604	2678	1776099131420804358	ADM_OSC_Music_Panner_artefacts/Release/libADM-OSC Panner_SharedCode.a	59545f2f792cd05d
+2678	2997	1776099131494789430	ADM_OSC_Music_Panner_artefacts/Release/AU/ADM-OSC Panner.component/Contents/MacOS/ADM-OSC Panner	c7524f9e05a99e3a
+2678	3157	1776099131495020225	ADM_OSC_Music_Panner_artefacts/Release/VST3/ADM-OSC Panner.vst3/Contents/MacOS/ADM-OSC Panner	96dd2e595a148902
+4	41	1776099585982868508	/Users/pierreu/Documents/9_Dev/3_VST/ADM-OSC_Panner_V1/build/CMakeFiles/cmake.verify_globs	7bcce09a6e004103
+60	2649	1776099586039112744	CMakeFiles/ADM_OSC_Music_Panner.dir/Source/PluginProcessor.cpp.o	e6acf810cb43dc17
+2649	2718	1776099588628078751	ADM_OSC_Music_Panner_artefacts/Release/libADM-OSC Panner_SharedCode.a	59545f2f792cd05d
+2718	3043	1776099588696932425	ADM_OSC_Music_Panner_artefacts/Release/AU/ADM-OSC Panner.component/Contents/MacOS/ADM-OSC Panner	c7524f9e05a99e3a
+2718	3203	1776099588697271510	ADM_OSC_Music_Panner_artefacts/Release/VST3/ADM-OSC Panner.vst3/Contents/MacOS/ADM-OSC Panner	96dd2e595a148902
+17	92	1776257410139635247	/Users/pierreu/Documents/9_Dev/3_VST/ADM-OSC_Panner_V1/build/CMakeFiles/cmake.verify_globs	7bcce09a6e004103
+240	3088	1776257410362556315	CMakeFiles/ADM_OSC_Music_Panner.dir/Source/PluginEditor.cpp.o	5c69788c9498f3ea
+240	3178	1776257410362307606	CMakeFiles/ADM_OSC_Music_Panner.dir/Source/PluginProcessor.cpp.o	e6acf810cb43dc17
+3178	3303	1776257413300343449	ADM_OSC_Music_Panner_artefacts/Release/libADM-OSC Panner_SharedCode.a	59545f2f792cd05d
+3303	3728	1776257413425366705	ADM_OSC_Music_Panner_artefacts/Release/AU/ADM-OSC Panner.component/Contents/MacOS/ADM-OSC Panner	c7524f9e05a99e3a
+3303	3789	1776257413425571414	ADM_OSC_Music_Panner_artefacts/Release/VST3/ADM-OSC Panner.vst3/Contents/MacOS/ADM-OSC Panner	96dd2e595a148902
+3	43	1776257659582934098	/Users/pierreu/Documents/9_Dev/3_VST/ADM-OSC_Panner_V1/build/CMakeFiles/cmake.verify_globs	7bcce09a6e004103
+61	2432	1776257659640807123	CMakeFiles/ADM_OSC_Music_Panner.dir/Source/PluginProcessor.cpp.o	e6acf810cb43dc17
+2432	2497	1776257662011712421	ADM_OSC_Music_Panner_artefacts/Release/libADM-OSC Panner_SharedCode.a	59545f2f792cd05d
+2498	2793	1776257662076990227	ADM_OSC_Music_Panner_artefacts/Release/AU/ADM-OSC Panner.component/Contents/MacOS/ADM-OSC Panner	c7524f9e05a99e3a
+2498	2843	1776257662077123478	ADM_OSC_Music_Panner_artefacts/Release/VST3/ADM-OSC Panner.vst3/Contents/MacOS/ADM-OSC Panner	96dd2e595a148902
+3	44	1776257991060131435	/Users/pierreu/Documents/9_Dev/3_VST/ADM-OSC_Panner_V1/build/CMakeFiles/cmake.verify_globs	7bcce09a6e004103
+63	2777	1776257991119470925	CMakeFiles/ADM_OSC_Music_Panner.dir/Source/PluginProcessor.cpp.o	e6acf810cb43dc17
+2777	2851	1776257993834129570	ADM_OSC_Music_Panner_artefacts/Release/libADM-OSC Panner_SharedCode.a	59545f2f792cd05d
+2851	3176	1776257993907433450	ADM_OSC_Music_Panner_artefacts/Release/AU/ADM-OSC Panner.component/Contents/MacOS/ADM-OSC Panner	c7524f9e05a99e3a
+2851	3236	1776257993907631784	ADM_OSC_Music_Panner_artefacts/Release/VST3/ADM-OSC Panner.vst3/Contents/MacOS/ADM-OSC Panner	96dd2e595a148902
