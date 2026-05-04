@@ -1,0 +1,29 @@
+# macOS
+.DS_Store
+
+# Build artifacts
+/build/
+/dist/
+/pkg_au_work/
+/pkg_vst3_work/
+
+# CMake/Ninja transient files (extra safety)
+CMakeCache.txt
+CMakeFiles/
+*.ninja
+*.ninja_*
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Installer/binary artifacts
+*.pkg
+*.zip
+*.dmg
+*.vst3
+*.component
+*.app
+
+# Optional local docs/workbench
+/Presentation/
