@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(ADM-OSC_Music-Panner VERSION 1.0 LANGUAGES C CXX OBJC OBJCXX)
+project(ADM-OSC_Music-Panner VERSION 1.0.1 LANGUAGES C CXX OBJC OBJCXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -23,7 +23,7 @@ FetchContent_MakeAvailable(juce)
 
 # === Plugin ===
 juce_add_plugin(ADM_OSC_Music_Panner
-    COMPANY_NAME "LaToolDePierrot"
+    COMPANY_NAME "Pierrot's Tools"
     BUNDLE_ID    com.Pierrot.adm_osc_music_panner
     IS_SYNTH FALSE
     NEEDS_MIDI_INPUT FALSE
@@ -32,7 +32,7 @@ juce_add_plugin(ADM_OSC_Music_Panner
     VST3_CATEGORIES "Fx"           # ou "Effect"
     AU_MAIN_TYPE kAudioUnitType_Effect
     COPY_PLUGIN_AFTER_BUILD TRUE
-    FORMATS VST3 AU
+    FORMATS VST3 AU Standalone
     PRODUCT_NAME "ADM-OSC Panner"
 )
 

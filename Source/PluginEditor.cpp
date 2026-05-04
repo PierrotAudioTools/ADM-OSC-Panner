@@ -3,62 +3,50 @@
 namespace
 {
     constexpr float circlePadding = 6.0f;
+    constexpr const char* uiTypefaceName = "Avenir Next Condensed";
+    constexpr float uiFontScale = 0.9f;
+    constexpr float uiFontBoost = 6.0f;
+    constexpr float uiLetterSpacing = 0.05f;
+    constexpr float fs (float v) { return v * uiFontScale + uiFontBoost; }
+
+    juce::Font uiFont (float baseSize, int style = juce::Font::plain)
+    {
+        auto f = juce::Font { juce::FontOptions (fs (baseSize), style) };
+        f.setExtraKerningFactor (uiLetterSpacing);
+        return f;
+    }
+
+    juce::Font uiMediumFont (float baseSize)
+    {
+        auto f = uiFont (baseSize, juce::Font::plain);
+        f.setTypefaceStyle ("Demi Bold");
+        if (! f.getTypefaceStyle().containsIgnoreCase ("demi")
+            && ! f.getTypefaceStyle().containsIgnoreCase ("semi"))
+            f.setTypefaceStyle ("Semibold");
+        return f;
+    }
 
     namespace Palette
     {
-        const juce::Colour backgroundTop    (0xff161b22);
-        const juce::Colour backgroundBottom (0xff05070b);
-        const juce::Colour panelFill        (0xff11161d);
-        const juce::Colour panelHighlight   (0xff2b3440);
-        const juce::Colour accent           (0xff4dd2ff);
-        const juce::Colour accentSoft       (0xff2a8fb8);
-        const juce::Colour textPrimary      (0xffecf1f6);
-        const juce::Colour textSecondary    (0xff9ca8b5);
-        const juce::Colour mutedFill        (0xff1a212b);
-        const juce::Colour sliderTrack      (0xff273240);
-        const juce::Colour sliderThumb      (0xffc8d2dd);
+        const juce::Colour backgroundTop    (0xff141414);
+        const juce::Colour backgroundBottom (0xff080808);
+        const juce::Colour panelFill        (0xff1b1b1b);
+        const juce::Colour panelHighlight   (0xff373737);
+        const juce::Colour accent           (0xff9a9a9a);
+        const juce::Colour accentSoft       (0xff6a6a6a);
+        const juce::Colour textPrimary      (0xffefefef);
+        const juce::Colour textSecondary    (0xffa0a0a0);
+        const juce::Colour mutedFill        (0xff242424);
+        const juce::Colour sliderTrack      (0xff343434);
+        const juce::Colour sliderThumb      (0xffd6d6d6);
         const juce::Colour sliderX          (0xffffa24d);
         const juce::Colour sliderY          (0xff6cb6ff);
         const juce::Colour sliderZ          (0xff47d6b4);
+        const juce::Colour panPoint         (0xff66d6ff);
+        const juce::Colour panPointSoft     (0xff2f8aa5);
         const juce::Colour warning          (0xffffbe63);
     }
-}
 
-void CircleIconComponent::paint (juce::Graphics& g)
-{
-    auto bounds = getLocalBounds().toFloat().reduced (2.0f);
-    auto centre = bounds.getCentre();
-    const float radius = juce::jmin (bounds.getWidth(), bounds.getHeight()) * 0.45f;
-
-    g.setColour (Palette::accent.withAlpha (0.18f));
-    g.fillEllipse (bounds);
-
-    g.setColour (Palette::accent);
-    g.drawEllipse (bounds, 2.0f);
-
-    juce::Line<float> horizontal (centre.x - radius, centre.y, centre.x + radius, centre.y);
-    juce::Line<float> vertical   (centre.x, centre.y - radius, centre.x, centre.y + radius);
-    g.setColour (Palette::accentSoft.withAlpha (0.65f));
-    g.drawLine (horizontal, 1.6f);
-    g.drawLine (vertical, 1.6f);
-
-    auto drawNode = [&g] (juce::Point<float> point, juce::Colour colour)
-    {
-        const float nodeRadius = 6.0f;
-        g.setColour (colour.withAlpha (0.18f));
-        g.fillEllipse (point.x - nodeRadius, point.y - nodeRadius, nodeRadius * 2.0f, nodeRadius * 2.0f);
-        g.setColour (colour);
-        g.drawEllipse (point.x - nodeRadius, point.y - nodeRadius, nodeRadius * 2.0f, nodeRadius * 2.0f, 1.4f);
-    };
-
-    drawNode ({ centre.x, centre.y - radius * 0.75f }, Palette::sliderY);
-    drawNode ({ centre.x, centre.y + radius * 0.75f }, Palette::sliderY);
-    drawNode ({ centre.x - radius * 0.75f, centre.y }, Palette::sliderX);
-    drawNode ({ centre.x + radius * 0.75f, centre.y }, Palette::sliderZ);
-
-    const float orbitRadius = radius * 0.6f;
-    g.setColour (Palette::accentSoft.withAlpha (0.35f));
-    g.drawEllipse (centre.x - orbitRadius, centre.y - orbitRadius, orbitRadius * 2.0f, orbitRadius * 2.0f, 1.4f);
 }
 
 class ADM_OSC_Music_PannerAudioProcessorEditor::StatusLight final : public juce::Component
@@ -102,6 +90,29 @@ private:
     bool isActive { false };
 };
 
+class CompactComboBoxLookAndFeel final : public juce::LookAndFeel_V4
+{
+public:
+    juce::Font getComboBoxFont (juce::ComboBox&) override
+    {
+        return uiFont (12.0f, juce::Font::plain);
+    }
+};
+
+class ADM_OSC_Music_PannerAudioProcessorEditor::ClickHotspot final : public juce::Component
+{
+public:
+    std::function<void()> onClick;
+
+    void paint (juce::Graphics&) override {}
+
+    void mouseUp (const juce::MouseEvent& event) override
+    {
+        if (event.mouseWasClicked() && onClick != nullptr)
+            onClick();
+    }
+};
+
 //==============================================================================
 PositionDisplay::PositionDisplay (ADM_OSC_Music_PannerAudioProcessor& p)
     : processor (p), state (p.getValueTreeState())
@@ -137,15 +148,15 @@ void PositionDisplay::paint (juce::Graphics& g)
     juce::ColourGradient background (Palette::panelFill.brighter (0.05f), bounds.getTopLeft(),
                                      Palette::panelFill.darker (0.2f), bounds.getBottomRight(), false);
     g.setGradientFill (background);
-    g.fillRoundedRectangle (bounds, 22.0f);
+    g.fillRoundedRectangle (bounds, 10.0f);
 
     g.setColour (Palette::panelHighlight.withAlpha (0.45f));
-    g.drawRoundedRectangle (bounds, 22.0f, 1.4f);
+    g.drawRoundedRectangle (bounds, 10.0f, 1.4f);
 
     g.setColour (Palette::panelFill.darker (0.1f));
-    g.fillRoundedRectangle (interactive, 18.0f);
+    g.fillRoundedRectangle (interactive, 8.0f);
     g.setColour (Palette::panelHighlight.withAlpha (0.35f));
-    g.drawRoundedRectangle (interactive, 18.0f, 1.2f);
+    g.drawRoundedRectangle (interactive, 8.0f, 1.2f);
 
     auto drawAxis = [&g] (juce::Point<float> start, juce::Point<float> end)
     {
@@ -167,11 +178,11 @@ void PositionDisplay::paint (juce::Graphics& g)
     const auto zNormal = juce::jlimit (0.0f, 1.0f, juce::jmap (cachedZ, -1.0f, 1.0f, 0.0f, 1.0f));
 
     const float haloRadius = juce::jmap (zNormal, 0.0f, 1.0f, 10.0f, 18.0f);
-    g.setColour (Palette::accentSoft.withAlpha (0.3f + 0.2f * zNormal));
+    g.setColour (Palette::panPointSoft.withAlpha (0.3f + 0.2f * zNormal));
     g.fillEllipse (pointX - haloRadius, pointY - haloRadius, haloRadius * 2.0f, haloRadius * 2.0f);
 
     const float baseRadius = 8.0f;
-    g.setColour (Palette::accent);
+    g.setColour (Palette::panPoint);
     g.fillEllipse (pointX - baseRadius, pointY - baseRadius, baseRadius * 2.0f, baseRadius * 2.0f);
 }
 void PositionDisplay::resized()
@@ -268,15 +279,15 @@ void ElevationDisplay::paint (juce::Graphics& g)
     juce::ColourGradient background (Palette::panelFill.brighter (0.04f), bounds.getTopLeft(),
                                      Palette::panelFill.darker (0.25f), bounds.getBottomRight(), false);
     g.setGradientFill (background);
-    g.fillRoundedRectangle (bounds, 20.0f);
+    g.fillRoundedRectangle (bounds, 10.0f);
 
     g.setColour (Palette::panelHighlight.withAlpha (0.45f));
-    g.drawRoundedRectangle (bounds, 20.0f, 1.4f);
+    g.drawRoundedRectangle (bounds, 10.0f, 1.4f);
 
     g.setColour (Palette::panelFill.darker (0.12f));
-    g.fillRoundedRectangle (interactive, 16.0f);
+    g.fillRoundedRectangle (interactive, 8.0f);
     g.setColour (Palette::panelHighlight.withAlpha (0.35f));
-    g.drawRoundedRectangle (interactive, 16.0f, 1.2f);
+    g.drawRoundedRectangle (interactive, 8.0f, 1.2f);
 
     g.setColour (Palette::textSecondary.withAlpha (0.6f));
     g.drawLine (juce::Line<float> ({ interactive.getX(), centre.y }, { interactive.getRight(), centre.y }), 2.0f);
@@ -293,11 +304,11 @@ void ElevationDisplay::paint (juce::Graphics& g)
     const auto zNormal = juce::jlimit (0.0f, 1.0f, juce::jmap (cachedZ, -1.0f, 1.0f, 0.0f, 1.0f));
 
     const float haloRadius = juce::jmap (zNormal, 0.0f, 1.0f, 10.0f, 18.0f);
-    g.setColour (Palette::accentSoft.withAlpha (0.3f + 0.2f * zNormal));
+    g.setColour (Palette::sliderZ.darker (0.45f).withAlpha (0.3f + 0.2f * zNormal));
     g.fillEllipse (pointX - haloRadius, pointY - haloRadius, haloRadius * 2.0f, haloRadius * 2.0f);
 
     const float baseRadius = 8.0f;
-    g.setColour (Palette::accent);
+    g.setColour (Palette::sliderZ);
     g.fillEllipse (pointX - baseRadius, pointY - baseRadius, baseRadius * 2.0f, baseRadius * 2.0f);
 }
 void ElevationDisplay::resized()
@@ -364,37 +375,36 @@ ADM_OSC_Music_PannerAudioProcessorEditor::ADM_OSC_Music_PannerAudioProcessorEdit
       positionDisplay (p),
       elevationDisplay (p)
 {
+    juce::LookAndFeel::getDefaultLookAndFeel().setDefaultSansSerifTypefaceName (uiTypefaceName);
+
     auto& state = audioProcessor.getValueTreeState();
 
     // === HEADER ===
+    const bool showBeta = ! juce::JUCEApplicationBase::isStandaloneApp();
+    if (showBeta)
+    {
+        addAndMakeVisible (betaLabel);
+        betaLabel.setText ("BETA", juce::dontSendNotification);
+        betaLabel.setFont (uiFont (20.0f, juce::Font::bold));
+        betaLabel.setJustificationType (juce::Justification::centredLeft);
+        betaLabel.setColour (juce::Label::textColourId, juce::Colour (0xfffff15a));
+    }
+    else
+    {
+        betaLabel.setVisible (false);
+    }
+
     addAndMakeVisible (titleLabel);
     titleLabel.setText ("ADM-OSC PANNER", juce::dontSendNotification);
-    titleLabel.setFont (juce::Font { juce::FontOptions (18.0f, juce::Font::bold) });
-    titleLabel.setJustificationType (juce::Justification::left);
+    titleLabel.setFont (uiFont (21.0f, juce::Font::bold));
+    titleLabel.setJustificationType (juce::Justification::centred);
     titleLabel.setColour (juce::Label::textColourId, Palette::textPrimary);
 
-    auto configureTab = [] (juce::Label& label, const juce::String& text)
-    {
-        label.setText (text, juce::dontSendNotification);
-        label.setJustificationType (juce::Justification::centred);
-        label.setFont (juce::Font { juce::FontOptions (15.0f, juce::Font::bold) });
-        label.setColour (juce::Label::textColourId, Palette::textSecondary);
-        label.setInterceptsMouseClicks (false, false);
-    };
+    companyLabel.setVisible (false);
 
-    configureTab (tabOscLabel, "OSC");
-    configureTab (tabFxLabel, "FX");
-    configureTab (tabSettingsLabel, "SETTINGS");
-    tabOscLabel.setColour (juce::Label::textColourId, Palette::textPrimary);
-    tabOscLabel.setVisible (false);
-    tabFxLabel.setVisible (false);
-    tabSettingsLabel.setVisible (false);
-
-    addAndMakeVisible (companyLabel);
-    companyLabel.setText ("La Tool de Pierrot", juce::dontSendNotification);
-    companyLabel.setFont (juce::Font { juce::FontOptions (14.0f, juce::Font::plain) });
-    companyLabel.setJustificationType (juce::Justification::right);
-    companyLabel.setColour (juce::Label::textColourId, Palette::textSecondary);
+    addAndMakeVisible (pierrotLink);
+    pierrotLink.setColour (juce::HyperlinkButton::textColourId, Palette::textSecondary);
+    pierrotLink.setFont (uiFont (13.0f, juce::Font::plain), false, juce::Justification::centredRight);
 
     configureLabel (posXLabel, "X");
     configureLabel (posYLabel, "Y");
@@ -408,66 +418,66 @@ ADM_OSC_Music_PannerAudioProcessorEditor::ADM_OSC_Music_PannerAudioProcessorEdit
 
     addAndMakeVisible (oscSectionTitle);
     oscSectionTitle.setText ("OSC", juce::dontSendNotification);
-    oscSectionTitle.setFont (juce::Font { juce::FontOptions (16.0f, juce::Font::bold) });
-    oscSectionTitle.setJustificationType (juce::Justification::left);
+    oscSectionTitle.setFont (uiFont (19.0f, juce::Font::bold));
+    oscSectionTitle.setJustificationType (juce::Justification::centred);
     oscSectionTitle.setColour (juce::Label::textColourId, Palette::textPrimary);
 
-    auto configureOscToggle = [] (juce::TextButton& button, const juce::String& text)
+    auto configureOscActionButton = [] (ClickHotspot& hotspot)
     {
-        button.setButtonText (text);
-        button.setClickingTogglesState (true);
-        button.setColour (juce::TextButton::buttonColourId, juce::Colours::transparentBlack);
-        button.setColour (juce::TextButton::buttonOnColourId, juce::Colours::transparentBlack);
-        button.setColour (juce::TextButton::textColourOnId, Palette::textPrimary);
-        button.setColour (juce::TextButton::textColourOffId, Palette::textSecondary.withAlpha (0.6f));
-        button.setMouseCursor (juce::MouseCursor::PointingHandCursor);
-        button.setWantsKeyboardFocus (false);
+        hotspot.setMouseCursor (juce::MouseCursor::PointingHandCursor);
+        hotspot.setWantsKeyboardFocus (false);
     };
+    receiveToggleHitbox = std::make_unique<ClickHotspot>();
+    sendPortToggleHitbox = std::make_unique<ClickHotspot>();
+    sendHostToggleHitbox = std::make_unique<ClickHotspot>();
+    configureOscActionButton (*receiveToggleHitbox);
+    configureOscActionButton (*sendPortToggleHitbox);
+    configureOscActionButton (*sendHostToggleHitbox);
 
-    configureOscToggle (oscInToggle, "IN");
-    configureOscToggle (oscOutToggle, "OUT");
-
-    oscInToggle.onClick = [this]
+    receiveToggleHitbox->onClick = [this]
     {
-        audioProcessor.setOscInputEnabled (oscInToggle.getToggleState());
+        audioProcessor.setOscInputEnabled (! audioProcessor.isOscInputEnabled());
         updateOscEnablementUI();
     };
 
-    oscOutToggle.onClick = [this]
+    sendPortToggleHitbox->onClick = [this]
     {
-        audioProcessor.setOscOutputEnabled (oscOutToggle.getToggleState());
+        audioProcessor.setOscOutputEnabled (! audioProcessor.isOscOutputEnabled());
         updateOscEnablementUI();
     };
 
-    addAndMakeVisible (oscInToggle);
-    addAndMakeVisible (oscOutToggle);
+    sendHostToggleHitbox->onClick = [this]
+    {
+        audioProcessor.setOscOutputEnabled (! audioProcessor.isOscOutputEnabled());
+        updateOscEnablementUI();
+    };
 
     receiveLabel.setText ("OSC In (Port)", juce::dontSendNotification);
-    receiveLabel.setFont (juce::Font { juce::FontOptions (15.0f, juce::Font::bold) });
+    receiveLabel.setFont (uiMediumFont (13.0f));
     receiveLabel.setJustificationType (juce::Justification::left);
     receiveLabel.setColour (juce::Label::textColourId, Palette::textSecondary);
 
     sendLabel.setText ("OSC Out (Port)", juce::dontSendNotification);
-    sendLabel.setFont (juce::Font { juce::FontOptions (15.0f, juce::Font::bold) });
+    sendLabel.setFont (uiMediumFont (13.0f));
     sendLabel.setJustificationType (juce::Justification::left);
     sendLabel.setColour (juce::Label::textColourId, Palette::textSecondary);
 
     // === OSC TAB ===
     configurePortEditor (receivePortEditor);
     receivePortEditor.onReturnKey = [this] { commitReceivePortFromEditor(); };
-    receivePortEditor.onFocusLost = [this] { refreshPortEditors(); };
+    receivePortEditor.onFocusLost = [this] { commitReceivePortFromEditor(); };
     receivePortEditor.onEscapeKey = [this] { refreshPortEditors(); };
 
     configurePortEditor (sendPortEditor);
     sendPortEditor.onReturnKey = [this] { commitSendPortFromEditor(); };
-    sendPortEditor.onFocusLost = [this] { refreshPortEditors(); };
+    sendPortEditor.onFocusLost = [this] { commitSendPortFromEditor(); };
     sendPortEditor.onEscapeKey = [this] { refreshPortEditors(); };
 
-    receiveStatusLight = std::make_unique<StatusLight> (Palette::accent);
-    sendStatusLight    = std::make_unique<StatusLight> (Palette::sliderZ);
+    receiveStatusLight = std::make_unique<StatusLight> (Palette::sliderThumb);
+    sendStatusLight    = std::make_unique<StatusLight> (Palette::sliderThumb);
 
     sendHostLabel.setText ("OSC Out (IP)", juce::dontSendNotification);
-    sendHostLabel.setFont (juce::Font { juce::FontOptions (15.0f, juce::Font::bold) });
+    sendHostLabel.setFont (uiMediumFont (13.0f));
     sendHostLabel.setJustificationType (juce::Justification::left);
     sendHostLabel.setColour (juce::Label::textColourId, Palette::textSecondary);
     sendHostLabel.setInterceptsMouseClicks (false, false);
@@ -480,22 +490,24 @@ ADM_OSC_Music_PannerAudioProcessorEditor::ADM_OSC_Music_PannerAudioProcessorEdit
     sendHostEditor.setColour (juce::TextEditor::backgroundColourId, Palette::mutedFill);
     sendHostEditor.setColour (juce::TextEditor::textColourId, Palette::textPrimary);
     sendHostEditor.setColour (juce::TextEditor::highlightColourId, Palette::accentSoft.withAlpha (0.45f));
-    sendHostEditor.setFont (juce::Font { juce::FontOptions (12.0f, juce::Font::bold) });
+    sendHostEditor.setFont (uiMediumFont (12.0f));
     sendHostEditor.setSelectAllWhenFocused (true);
     sendHostEditor.onReturnKey = [this] { commitSendHostFromEditor(); };
-    sendHostEditor.onFocusLost = [this] { refreshSendHostEditor(); };
+    sendHostEditor.onFocusLost = [this] { commitSendHostFromEditor(); };
     sendHostEditor.onEscapeKey = [this] { refreshSendHostEditor(); };
     addAndMakeVisible (sendHostEditor);
 
     oscFormatLabel.setText ("FORMAT", juce::dontSendNotification);
-    oscFormatLabel.setFont (juce::Font { juce::FontOptions (11.0f, juce::Font::bold) });
+    oscFormatLabel.setFont (uiMediumFont (13.0f));
     oscFormatLabel.setJustificationType (juce::Justification::left);
-    oscFormatLabel.setColour (juce::Label::textColourId, Palette::textSecondary);
+    oscFormatLabel.setColour (juce::Label::textColourId, Palette::textPrimary);
     oscFormatLabel.setInterceptsMouseClicks (false, false);
     addAndMakeVisible (oscFormatLabel);
 
     oscFormatBox.addItem ("Cartesian", 1);
     oscFormatBox.addItem ("Polar", 2);
+    static CompactComboBoxLookAndFeel compactComboLookAndFeel;
+    oscFormatBox.setLookAndFeel (&compactComboLookAndFeel);
     oscFormatBox.setJustificationType (juce::Justification::centred);
     oscFormatBox.setColour (juce::ComboBox::outlineColourId, juce::Colours::transparentBlack);
     oscFormatBox.setColour (juce::ComboBox::backgroundColourId, Palette::mutedFill);
@@ -505,78 +517,18 @@ ADM_OSC_Music_PannerAudioProcessorEditor::ADM_OSC_Music_PannerAudioProcessorEdit
 
     addAndMakeVisible (receiveLabel);
     addAndMakeVisible (sendLabel);
+    addAndMakeVisible (*receiveToggleHitbox);
+    addAndMakeVisible (*sendPortToggleHitbox);
+    addAndMakeVisible (*sendHostToggleHitbox);
     addAndMakeVisible (receivePortEditor);
     addAndMakeVisible (sendPortEditor);
-    addAndMakeVisible (receiveStatusLabel);
-    addAndMakeVisible (sendStatusLabel);
     addAndMakeVisible (*receiveStatusLight);
     addAndMakeVisible (*sendStatusLight);
 
-    circleToggle.setButtonText ("");
-    circleToggle.setClickingTogglesState (true);
-    circleToggle.setTooltip ("Enable an automatic circular path driven by the host tempo");
-    circleToggle.setColour (juce::ToggleButton::textColourId, Palette::textPrimary);
-    circleToggle.setColour (juce::ToggleButton::tickColourId, Palette::accent);
-    circleToggle.setColour (juce::ToggleButton::tickDisabledColourId, Palette::textSecondary.withAlpha (0.4f));
-    addAndMakeVisible (circleToggle);
-
-    circleSubdivisionLabel.setText ("TIME", juce::dontSendNotification);
-    circleSubdivisionLabel.setFont (juce::Font { juce::FontOptions (12.0f, juce::Font::bold) });
-    circleSubdivisionLabel.setJustificationType (juce::Justification::left);
-    circleSubdivisionLabel.setColour (juce::Label::textColourId, juce::Colours::white.withAlpha (0.65f));
-    circleSubdivisionLabel.setInterceptsMouseClicks (false, false);
-    addAndMakeVisible (circleSubdivisionLabel);
-
-    circleSubdivisionBox.addItemList (juce::StringArray { "1/1", "1/2", "1/4", "1/8" }, 1);
-    circleSubdivisionBox.setJustificationType (juce::Justification::centred);
-    circleSubdivisionBox.setSelectedId (3);
-    circleSubdivisionBox.setColour (juce::ComboBox::outlineColourId, juce::Colours::transparentBlack);
-    circleSubdivisionBox.setColour (juce::ComboBox::backgroundColourId, Palette::mutedFill);
-    circleSubdivisionBox.setColour (juce::ComboBox::textColourId, Palette::textPrimary);
-    circleSubdivisionBox.setScrollWheelEnabled (false);
-    addAndMakeVisible (circleSubdivisionBox);
-
-    circleRadiusLabel.setText ("RADIUS", juce::dontSendNotification);
-    circleRadiusLabel.setFont (juce::Font { juce::FontOptions (13.0f, juce::Font::bold) });
-    circleRadiusLabel.setJustificationType (juce::Justification::centred);
-    circleRadiusLabel.setColour (juce::Label::textColourId, Palette::textSecondary);
-    circleRadiusLabel.setInterceptsMouseClicks (false, false);
-    addAndMakeVisible (circleRadiusLabel);
-
-    initialiseSlider (circleRadiusSlider, true, false, 52, 18);
-    circleRadiusSlider.setTextBoxStyle (juce::Slider::TextEntryBoxPosition::TextBoxBelow, false, 60, 20);
-    circleRadiusSlider.setColour (juce::Slider::textBoxOutlineColourId, juce::Colours::transparentBlack);
-    circleRadiusSlider.setColour (juce::Slider::textBoxTextColourId, Palette::textPrimary);
-    circleRadiusSlider.setColour (juce::Slider::textBoxBackgroundColourId, Palette::mutedFill);
-    addAndMakeVisible (circleRadiusSlider);
-
-    addAndMakeVisible (circleIcon);
-
-    fxSectionLabel.setText ("FX", juce::dontSendNotification);
-    fxSectionLabel.setFont (juce::Font { juce::FontOptions (16.0f, juce::Font::bold) });
-    fxSectionLabel.setJustificationType (juce::Justification::centredLeft);
-    fxSectionLabel.setColour (juce::Label::textColourId, Palette::textPrimary);
-    fxSectionLabel.setInterceptsMouseClicks (false, false);
-    addAndMakeVisible (fxSectionLabel);
-
-    circleSectionLabel.setText ("CIRCLE", juce::dontSendNotification);
-    circleSectionLabel.setFont (juce::Font { juce::FontOptions (13.0f, juce::Font::bold) });
-    circleSectionLabel.setJustificationType (juce::Justification::centredLeft);
-    circleSectionLabel.setColour (juce::Label::textColourId, Palette::textSecondary);
-    circleSectionLabel.setInterceptsMouseClicks (false, false);
-    addAndMakeVisible (circleSectionLabel);
-
-    circleActivateLabel.setText ("ACTIVATE", juce::dontSendNotification);
-    circleActivateLabel.setFont (juce::Font { juce::FontOptions (13.0f, juce::Font::bold) });
-    circleActivateLabel.setJustificationType (juce::Justification::left);
-    circleActivateLabel.setColour (juce::Label::textColourId, Palette::textSecondary);
-    circleActivateLabel.setInterceptsMouseClicks (false, false);
-    addAndMakeVisible (circleActivateLabel);
-
-    objectLabel.setText ("OBJECT", juce::dontSendNotification);
-    objectLabel.setFont (juce::Font { juce::FontOptions (13.0f, juce::Font::bold) });
-    objectLabel.setJustificationType (juce::Justification::centredRight);
-    objectLabel.setColour (juce::Label::textColourId, Palette::textSecondary);
+    objectLabel.setText ("OBJ", juce::dontSendNotification);
+    objectLabel.setFont (uiMediumFont (14.0f));
+    objectLabel.setJustificationType (juce::Justification::centred);
+    objectLabel.setColour (juce::Label::textColourId, Palette::textPrimary);
     objectLabel.setInterceptsMouseClicks (false, false);
     addAndMakeVisible (objectLabel);
 
@@ -586,15 +538,16 @@ ADM_OSC_Music_PannerAudioProcessorEditor::ADM_OSC_Music_PannerAudioProcessorEdit
     objectEditor.setColour (juce::TextEditor::focusedOutlineColourId, Palette::accent);
     objectEditor.setColour (juce::TextEditor::backgroundColourId, Palette::mutedFill);
     objectEditor.setColour (juce::TextEditor::textColourId, Palette::textPrimary);
+    objectEditor.setFont (uiMediumFont (14.0f));
     objectEditor.setSelectAllWhenFocused (true);
     objectEditor.onReturnKey = [this] { commitObjectNumberFromEditor(); };
-    objectEditor.onFocusLost = [this] { refreshObjectEditor(); };
+    objectEditor.onFocusLost = [this] { commitObjectNumberFromEditor(); };
     objectEditor.onEscapeKey = [this] { refreshObjectEditor(); };
     addAndMakeVisible (objectEditor);
 
     addAndMakeVisible (mapsSectionLabel);
     mapsSectionLabel.setText ("PANNER", juce::dontSendNotification);
-    mapsSectionLabel.setFont (juce::Font { juce::FontOptions (16.0f, juce::Font::bold) });
+    mapsSectionLabel.setFont (uiFont (19.0f, juce::Font::bold));
     mapsSectionLabel.setJustificationType (juce::Justification::centred);
     mapsSectionLabel.setColour (juce::Label::textColourId, Palette::textPrimary);
     mapsSectionLabel.setInterceptsMouseClicks (false, false);
@@ -604,7 +557,7 @@ ADM_OSC_Music_PannerAudioProcessorEditor::ADM_OSC_Music_PannerAudioProcessorEdit
     addAndMakeVisible (elevationDisplay);
 
     oscInfoLabel.setText ("", juce::dontSendNotification);
-    oscInfoLabel.setFont (juce::Font { juce::FontOptions (11.0f, juce::Font::plain) });
+    oscInfoLabel.setFont (uiMediumFont (11.0f));
     oscInfoLabel.setJustificationType (juce::Justification::left);
     oscInfoLabel.setColour (juce::Label::textColourId, Palette::textSecondary);
     oscInfoLabel.setInterceptsMouseClicks (false, false);
@@ -612,8 +565,8 @@ ADM_OSC_Music_PannerAudioProcessorEditor::ADM_OSC_Music_PannerAudioProcessorEdit
     addAndMakeVisible (oscInfoLabel);
 
     // === CONTROL ===
-    controlTitle.setText ("Parameters", juce::dontSendNotification);
-    controlTitle.setFont (juce::Font { juce::FontOptions (16.0f, juce::Font::bold) });
+    controlTitle.setText ("POSITION", juce::dontSendNotification);
+    controlTitle.setFont (uiFont (19.0f, juce::Font::bold));
     controlTitle.setJustificationType (juce::Justification::centred);
     controlTitle.setColour (juce::Label::textColourId, Palette::textPrimary);
     addAndMakeVisible (controlTitle);
@@ -650,22 +603,22 @@ ADM_OSC_Music_PannerAudioProcessorEditor::ADM_OSC_Music_PannerAudioProcessorEdit
     posXAttachment = std::make_unique<SliderAttachment> (state, ParameterIDs::posX, posXSlider);
     posYAttachment = std::make_unique<SliderAttachment> (state, ParameterIDs::posY, posYSlider);
     posZAttachment = std::make_unique<SliderAttachment> (state, ParameterIDs::posZ, posZSlider);
-    circleEnabledAttachment = std::make_unique<ButtonAttachment> (state, ParameterIDs::circleEnabled, circleToggle);
-    circleRadiusAttachment = std::make_unique<SliderAttachment> (state, ParameterIDs::circleRadius, circleRadiusSlider);
-    circleSubdivisionAttachment = std::make_unique<ComboAttachment> (state, ParameterIDs::circleSubdivision, circleSubdivisionBox);
 
     refreshPortEditors();
     refreshObjectEditor();
     updateOscEnablementUI();
+    juce::Desktop::getInstance().addGlobalMouseListener (static_cast<juce::Component*> (this));
     startTimerHz (20);
     timerCallback();
 
     refreshOscFormatEditors();
-    setSize (600, 750);
+    setSize (615, 615);
 }
 
 ADM_OSC_Music_PannerAudioProcessorEditor::~ADM_OSC_Music_PannerAudioProcessorEditor()
 {
+    juce::Desktop::getInstance().removeGlobalMouseListener (static_cast<juce::Component*> (this));
+    oscFormatBox.setLookAndFeel (nullptr);
     stopTimer();
 }
 
@@ -699,134 +652,130 @@ void ADM_OSC_Music_PannerAudioProcessorEditor::paint (juce::Graphics& g)
     if (! headerPanelBounds.isEmpty())
     {
         auto header = headerPanelBounds.toFloat();
-        juce::ColourGradient headerGradient (Palette::backgroundTop.brighter (0.2f), header.getTopLeft(),
-                                             Palette::backgroundTop.darker (0.2f), header.getBottomLeft(), false);
+        juce::ColourGradient headerGradient (Palette::panelFill.brighter (0.03f), header.getTopLeft(),
+                                             Palette::panelFill.darker (0.08f), header.getBottomLeft(), false);
         g.setGradientFill (headerGradient);
-        g.fillRoundedRectangle (header, 18.0f);
+        g.fillRoundedRectangle (header, 9.0f);
         g.setColour (Palette::panelHighlight.withAlpha (0.6f));
-        g.drawRoundedRectangle (header, 18.0f, 1.0f);
+        g.drawRoundedRectangle (header, 9.0f, 1.0f);
     }
 
-    if (! tabPanelBounds.isEmpty())
-    {
-        auto tabs = tabPanelBounds.toFloat();
-        g.setColour (Palette::panelFill.withAlpha (0.95f));
-        g.fillRoundedRectangle (tabs, 14.0f);
-        g.setColour (Palette::panelHighlight.withAlpha (0.45f));
-        g.drawRoundedRectangle (tabs, 14.0f, 1.0f);
-
-        auto activeBounds = tabOscLabel.getBounds();
-        if (! activeBounds.isEmpty())
-        {
-            auto active = activeBounds.toFloat()
-                                .withY (tabs.getY())
-                                .withHeight (tabs.getHeight())
-                                .expanded (6.0f, 6.0f)
-                                .getIntersection (tabs);
-
-            g.setColour (Palette::accent.withAlpha (0.14f));
-            g.fillRoundedRectangle (active, 12.0f);
-
-            juce::Line<float> underline (juce::Point<float> (static_cast<float> (activeBounds.getX()),
-                                                             static_cast<float> (activeBounds.getBottom() + 6)),
-                                         juce::Point<float> (static_cast<float> (activeBounds.getRight()),
-                                                             static_cast<float> (activeBounds.getBottom() + 6)));
-            g.setColour (Palette::accent);
-            g.drawLine (underline, 2.0f);
-        }
-    }
-
-    drawPanel (oscPanelBounds, 16.0f);
-    drawPanel (mapsPanelBounds, 16.0f);
-    drawPanel (controlPanelBounds, 16.0f);
-    drawPanel (fxPanelBounds, 16.0f);
+    drawPanel (oscPanelBounds, 9.0f);
+    drawPanel (mapsPanelBounds, 9.0f);
+    drawPanel (controlPanelBounds, 9.0f);
 }
 
 void ADM_OSC_Music_PannerAudioProcessorEditor::resized()
 {
-    headerPanelBounds = juce::Rectangle<int> (10, 10, 575, 50);
-    titleLabel.setBounds (headerPanelBounds.getX() + 16, headerPanelBounds.getY() + 14, 220, 20);
-    companyLabel.setBounds (headerPanelBounds.getRight() - 165, headerPanelBounds.getY() + 14, 155, 20);
+    auto bounds = getLocalBounds();
+    const int outerMargin = 16;
+    const int topGap = 7;
+    const int panelGap = 14;
 
-    tabPanelBounds = {};
-    tabOscLabel.setBounds (juce::Rectangle<int>());
-    tabFxLabel.setBounds (juce::Rectangle<int>());
-    tabSettingsLabel.setBounds (juce::Rectangle<int>());
+    auto content = bounds.reduced (outerMargin, 10);
 
-    oscPanelBounds = juce::Rectangle<int> (10, 70, 270, 170);
-    controlPanelBounds = juce::Rectangle<int> (310, 70, 280, 170);
+    headerPanelBounds = content.removeFromTop (48);
+    if (betaLabel.isVisible())
+    {
+        const int betaW = 118;
+        const int betaH = 34;
+        betaLabel.setBounds (headerPanelBounds.getX() + 10,
+                             headerPanelBounds.getY() + (headerPanelBounds.getHeight() - betaH) / 2,
+                             betaW, betaH);
+    }
+    titleLabel.setBounds (headerPanelBounds.getX(), headerPanelBounds.getY(), headerPanelBounds.getWidth(), headerPanelBounds.getHeight());
+    pierrotLink.setBounds (headerPanelBounds.getRight() - 170, headerPanelBounds.getY() + 11, 150, 22);
 
-    oscSectionTitle.setBounds (oscPanelBounds.getX() + (oscPanelBounds.getWidth() - 120) / 2,
-                               oscPanelBounds.getY() + 10, 120, 20);
-    oscSectionTitle.setFont (juce::Font { juce::FontOptions (16.0f, juce::Font::bold) });
+    content.removeFromTop (topGap);
+    auto topRow = content.removeFromTop (190);
+    content.removeFromTop (panelGap - 5);
+    auto bottomRow = content;
+
+    const int minControlWidth = 275;
+    const int targetOscWidth = 292;
+    const int maxOscWidth = juce::jmax (260, topRow.getWidth() - panelGap - minControlWidth);
+    const int oscWidth = juce::jlimit (260, maxOscWidth, targetOscWidth);
+
+    oscPanelBounds = topRow.removeFromLeft (oscWidth);
+    topRow.removeFromLeft (panelGap);
+    controlPanelBounds = topRow;
+    mapsPanelBounds = bottomRow.withTrimmedBottom (5);
+
+    oscSectionTitle.setBounds (oscPanelBounds.getX(), oscPanelBounds.getY() + 11, oscPanelBounds.getWidth(), 24);
     oscSectionTitle.setJustificationType (juce::Justification::centred);
 
-    const int toggleHeight = oscSectionTitle.getHeight();
-    const int toggleY = oscSectionTitle.getY();
-    const int toggleSpacing = 6;
-    const int toggleBaseX = oscSectionTitle.getRight() - 22;
-    const int inToggleWidth = 34;
-    oscInToggle.setBounds (toggleBaseX, toggleY - 1, inToggleWidth, toggleHeight + 2);
-    oscOutToggle.setBounds (toggleBaseX + inToggleWidth + toggleSpacing, toggleY - 1, 44, toggleHeight + 2);
+    const int left = oscPanelBounds.getX() + 20;
+    const int labelW = 130;
+    const int valueX = left + labelW - 5;
+    const int rowH = 30;
+    const int startY = oscPanelBounds.getY() + 51;
 
-    receiveLabel.setBounds (27, 114, 120, 20);
-    sendLabel.setBounds (27, 143, 120, 20);
-    sendHostLabel.setBounds (27, 172, 120, 20);
-    receiveLabel.setFont (juce::Font { juce::FontOptions (12.0f, juce::Font::plain) });
-    sendLabel.setFont (juce::Font { juce::FontOptions (12.0f, juce::Font::plain) });
-    sendHostLabel.setFont (juce::Font { juce::FontOptions (12.0f, juce::Font::plain) });
+    receiveLabel.setBounds (left, startY, labelW, 24);
+    sendLabel.setBounds (left, startY + rowH, labelW, 24);
+    sendHostLabel.setBounds (left, startY + rowH * 2, labelW, 24);
+    if (receiveToggleHitbox != nullptr)
+        receiveToggleHitbox->setBounds (receiveLabel.getBounds());
+    if (sendPortToggleHitbox != nullptr)
+        sendPortToggleHitbox->setBounds (sendLabel.getBounds());
+    if (sendHostToggleHitbox != nullptr)
+        sendHostToggleHitbox->setBounds (sendHostLabel.getBounds());
+    oscFormatLabel.setBounds (left, startY + rowH * 3, labelW, 24);
 
-    receivePortEditor.setBounds (157, 110, 90, 24);
-    sendPortEditor.setBounds (157, 139, 90, 24);
-    sendHostEditor.setBounds (157, 168, 90, 24);
+    receivePortEditor.setBounds (valueX, startY, 116, 24);
+    sendPortEditor.setBounds (valueX, startY + rowH, 116, 24);
+    sendHostEditor.setBounds (valueX, startY + rowH * 2, 136, 24);
+    oscFormatBox.setBounds (valueX, startY + rowH * 3, 136, 24);
+
     if (receiveStatusLight != nullptr)
-    {
-        receiveStatusLight->setVisible (true);
-        receiveStatusLight->setBounds (257, 116, 12, 12);
-    }
+        receiveStatusLight->setBounds (valueX + 124, startY + 6, 12, 12);
     if (sendStatusLight != nullptr)
-    {
-        sendStatusLight->setVisible (true);
-        sendStatusLight->setBounds (257, 145, 12, 12);
-    }
-    receiveStatusLabel.setVisible (false);
-    sendStatusLabel.setVisible (false);
-    oscFormatLabel.setBounds (27, 198, 120, 20);
-    oscFormatLabel.setFont (juce::Font { juce::FontOptions (12.0f, juce::Font::plain) });
-    oscFormatBox.setBounds (157, 195, 90, 24);
-    objectLabel.setVisible (true);
-    objectLabel.setText ("OBJECT", juce::dontSendNotification);
-    objectLabel.setFont (juce::Font { juce::FontOptions (14.0f, juce::Font::bold) });
-    objectLabel.setColour (juce::Label::textColourId, Palette::textPrimary);
-    objectLabel.setBounds (314, 132, 80, 20);
+        sendStatusLight->setBounds (valueX + 124, startY + rowH + 6, 12, 12);
 
-    objectEditor.setVisible (true);
-    objectEditor.setBounds (345, 156, 40, 22);
+    oscInfoLabel.setBounds (left, oscPanelBounds.getBottom() - 18, oscPanelBounds.getWidth() - 32, 14);
 
-    controlTitle.setBounds (controlPanelBounds.getX() + (controlPanelBounds.getWidth() - 140) / 2,
-                            controlPanelBounds.getY() + 10, 140, 20);
-    controlTitle.setFont (juce::Font { juce::FontOptions (16.0f, juce::Font::bold) });
+    const int controlTopY = controlPanelBounds.getY() + 11;
+    const int objectColumnX = controlPanelBounds.getX() + 24;
+    const int objectLabelW = 55;
+    const int objectEditorW = 49;
+    const int objectLabelH = 21;
+    const int objectEditorH = 27;
+    const int objectBlockGap = 2;
+    const int objectBlockH = objectLabelH + objectBlockGap + objectEditorH;
+    const int objectBlockY = controlPanelBounds.getY() + (controlPanelBounds.getHeight() - objectBlockH) / 2;
+    objectLabel.setBounds (objectColumnX, objectBlockY, objectLabelW, objectLabelH);
+    objectEditor.setBounds (objectColumnX + (objectLabelW - objectEditorW) / 2, objectBlockY + objectLabelH + objectBlockGap, objectEditorW, objectEditorH);
+
+    const int titleX = controlPanelBounds.getX() + 12;
+    const int titleW = controlPanelBounds.getWidth() - 24;
+    controlTitle.setBounds (titleX, controlTopY, titleW, 24);
     controlTitle.setJustificationType (juce::Justification::centred);
 
-    posXSlider.setBounds (430, 105, 24, 75);
-    posYSlider.setBounds (487, 105, 24, 75);
-    posZSlider.setBounds (544, 105, 24, 75);
+    const int sliderTop = controlPanelBounds.getY() + 58;
+    const int sliderH = 98;
+    const int sliderW = 24;
+    const int sliderAreaLeft = objectColumnX + objectLabelW + 14;
+    const int sliderAreaRight = controlPanelBounds.getRight() - 12;
+    const int sliderAreaWidth = juce::jmax (sliderW * 3 + 24, sliderAreaRight - sliderAreaLeft);
+    const int spacing = juce::jlimit (12, 28, (sliderAreaWidth - sliderW * 3) / 2);
+    const int firstX = sliderAreaLeft + (sliderAreaWidth - (sliderW * 3 + spacing * 2)) / 2;
 
-    posXLabel.setBounds (428, 185, 30, 20);
-    posYLabel.setBounds (485, 185, 30, 20);
-    posZLabel.setBounds (542, 185, 30, 20);
-    posXLabel.setFont (juce::Font { juce::FontOptions (12.0f, juce::Font::plain) });
-    posYLabel.setFont (juce::Font { juce::FontOptions (12.0f, juce::Font::plain) });
-    posZLabel.setFont (juce::Font { juce::FontOptions (12.0f, juce::Font::plain) });
+    posXSlider.setBounds (firstX + 7, sliderTop, sliderW, sliderH);
+    posYSlider.setBounds (firstX + 7 + sliderW + spacing, sliderTop, sliderW, sliderH);
+    posZSlider.setBounds (firstX + 7 + (sliderW + spacing) * 2, sliderTop, sliderW, sliderH);
 
-    const int mapSize = 240;
-    const int mapSpacing = 40;
-    const int mapTop = 310;
+    posXLabel.setBounds (posXSlider.getX() - 2, posXSlider.getBottom() + 4, 34, 18);
+    posYLabel.setBounds (posYSlider.getX() - 2, posYSlider.getBottom() + 4, 34, 18);
+    posZLabel.setBounds (posZSlider.getX() - 2, posZSlider.getBottom() + 4, 34, 18);
 
-    juce::Rectangle<int> topViewBounds (32, mapTop, mapSize, mapSize);
-    juce::Rectangle<int> rearViewBounds (323, mapTop - 3, mapSize, mapSize);
-    positionDisplay.setBounds (topViewBounds);
-    elevationDisplay.setBounds (rearViewBounds);
+    const int mapPadding = 18;
+    const int mapTop = mapsPanelBounds.getY() + 51;
+    const int mapHeight = mapsPanelBounds.getHeight() - 66;
+    const int mapSize = juce::jmin (mapHeight, (mapsPanelBounds.getWidth() - mapPadding * 3) / 2);
+    const int leftMapX = mapsPanelBounds.getX() + (mapsPanelBounds.getWidth() - (mapSize * 2 + mapPadding)) / 2;
+    const int rightMapX = leftMapX + mapSize + mapPadding;
+
+    positionDisplay.setBounds (leftMapX, mapTop, mapSize, mapSize);
+    elevationDisplay.setBounds (rightMapX, mapTop, mapSize, mapSize);
 
     if (mapLabels.empty())
     {
@@ -835,7 +784,7 @@ void ADM_OSC_Music_PannerAudioProcessorEditor::resized()
         for (auto& label : mapLabels)
         {
             label->setJustificationType (juce::Justification::centred);
-            label->setFont (juce::Font { juce::FontOptions (12.0f, juce::Font::bold) });
+            label->setFont (uiFont (12.0f, juce::Font::plain));
             label->setColour (juce::Label::textColourId, Palette::textSecondary);
             label->setInterceptsMouseClicks (false, false);
             addAndMakeVisible (*label);
@@ -844,28 +793,11 @@ void ADM_OSC_Music_PannerAudioProcessorEditor::resized()
 
     mapLabels[0]->setText ("TOP VIEW", juce::dontSendNotification);
     mapLabels[1]->setText ("REAR VIEW", juce::dontSendNotification);
-    mapLabels[0]->setBounds (102, 255, 100, 18);
-    mapLabels[1]->setBounds (393, 255, 100, 18);
+    mapLabels[0]->setBounds (positionDisplay.getX(), mapsPanelBounds.getY() + 24, positionDisplay.getWidth(), 18);
+    mapLabels[1]->setBounds (elevationDisplay.getX(), mapsPanelBounds.getY() + 24, elevationDisplay.getWidth(), 18);
 
     mapsSectionLabel.setVisible (true);
-    mapsSectionLabel.setBounds (235, 256, 120, 20);
-
-    mapsPanelBounds = juce::Rectangle<int> (11, 251, 575, 310);
-
-    fxPanelBounds = juce::Rectangle<int> (11, 573, 575, 163);
-
-    fxSectionLabel.setBounds (284, 584, 80, 20);
-    const int fxRowY = 640;
-    circleSectionLabel.setBounds (85, fxRowY, 80, 20);
-    circleToggle.setBounds (163, fxRowY, 18, 18);
-    circleActivateLabel.setBounds (195, fxRowY, 80, 18);
-    circleRadiusLabel.setBounds (283, fxRowY, 80, 18);
-    circleRadiusSlider.setBounds (356, fxRowY - 16, 60, 60);
-    circleSubdivisionLabel.setText ("TIME", juce::dontSendNotification);
-    circleSubdivisionLabel.setBounds (426, fxRowY, 60, 18);
-    circleSubdivisionBox.setBounds (500, fxRowY - 6, 60, 24);
-    circleIcon.setBounds (22, fxRowY - 16, 40, 40);
-    oscInfoLabel.setBounds (27, 222, 242, 14);
+    mapsSectionLabel.setBounds (mapsPanelBounds.getCentreX() - 60, mapsPanelBounds.getY() + 7, 120, 20);
 }
 
 
@@ -899,7 +831,7 @@ void ADM_OSC_Music_PannerAudioProcessorEditor::initialiseSlider (juce::Slider& s
 void ADM_OSC_Music_PannerAudioProcessorEditor::configureLabel (juce::Label& label, const juce::String& text)
 {
     label.setText (text, juce::dontSendNotification);
-    label.setFont (juce::Font { juce::FontOptions (17.0f, juce::Font::bold) });
+    label.setFont (uiFont (17.0f, juce::Font::plain));
     label.setJustificationType (juce::Justification::centredLeft);
     label.setColour (juce::Label::textColourId, Palette::textPrimary);
 }
@@ -913,7 +845,7 @@ void ADM_OSC_Music_PannerAudioProcessorEditor::configurePortEditor (juce::TextEd
     editor.setColour (juce::TextEditor::focusedOutlineColourId, Palette::accent);
     editor.setColour (juce::TextEditor::textColourId, Palette::textPrimary);
     editor.setColour (juce::TextEditor::highlightColourId, Palette::accentSoft.withAlpha (0.45f));
-    editor.setFont (juce::Font { juce::FontOptions (12.0f, juce::Font::bold) });
+    editor.setFont (uiMediumFont (12.0f));
 }
 
 void ADM_OSC_Music_PannerAudioProcessorEditor::commitReceivePortFromEditor()
@@ -997,10 +929,7 @@ void ADM_OSC_Music_PannerAudioProcessorEditor::updateOscEnablementUI()
     const bool inputEnabled = audioProcessor.isOscInputEnabled();
     const bool outputEnabled = audioProcessor.isOscOutputEnabled();
 
-    oscInToggle.setToggleState (inputEnabled, juce::dontSendNotification);
-    oscOutToggle.setToggleState (outputEnabled, juce::dontSendNotification);
-
-    receiveLabel.setEnabled (inputEnabled);
+    receiveLabel.setColour (juce::Label::textColourId, inputEnabled ? Palette::textPrimary : Palette::textSecondary);
     receivePortEditor.setEnabled (inputEnabled);
     if (receiveStatusLight != nullptr)
     {
@@ -1009,9 +938,9 @@ void ADM_OSC_Music_PannerAudioProcessorEditor::updateOscEnablementUI()
             receiveStatusLight->setActive (false);
     }
 
-    sendLabel.setEnabled (outputEnabled);
+    sendLabel.setColour (juce::Label::textColourId, outputEnabled ? Palette::textPrimary : Palette::textSecondary);
     sendPortEditor.setEnabled (outputEnabled);
-    sendHostLabel.setEnabled (outputEnabled);
+    sendHostLabel.setColour (juce::Label::textColourId, outputEnabled ? Palette::textPrimary : Palette::textSecondary);
     sendHostEditor.setEnabled (outputEnabled);
     oscFormatLabel.setEnabled (inputEnabled || outputEnabled);
     oscFormatBox.setEnabled (inputEnabled || outputEnabled);
@@ -1023,9 +952,35 @@ void ADM_OSC_Music_PannerAudioProcessorEditor::updateOscEnablementUI()
     }
 }
 
+void ADM_OSC_Music_PannerAudioProcessorEditor::mouseDown (const juce::MouseEvent& event)
+{
+    dismissEditorsIfNeeded (event.originalComponent);
+}
+
+void ADM_OSC_Music_PannerAudioProcessorEditor::dismissEditorsIfNeeded (juce::Component* clickedComponent)
+{
+    auto shouldDismiss = [clickedComponent] (juce::TextEditor& editor)
+    {
+        if (! editor.hasKeyboardFocus (true))
+            return false;
+
+        return clickedComponent != &editor && ! editor.isParentOf (clickedComponent);
+    };
+
+    if (shouldDismiss (receivePortEditor) || shouldDismiss (sendPortEditor) || shouldDismiss (sendHostEditor) || shouldDismiss (objectEditor))
+        juce::Component::unfocusAllComponents();
+}
+
 void ADM_OSC_Music_PannerAudioProcessorEditor::timerCallback()
 {
     updateOscEnablementUI();
+
+    if (betaLabel.isVisible())
+    {
+        const bool betaVisible = (static_cast<int> (juce::Time::getMillisecondCounterHiRes() / 320.0) % 2) == 0;
+        betaLabel.setAlpha (betaVisible ? 1.0f : 0.08f);
+        betaLabel.setColour (juce::Label::textColourId, betaVisible ? juce::Colour (0xfffff15a) : juce::Colour (0xffff8a00));
+    }
 
     const bool receivingActive = audioProcessor.isReceivingActive();
     const bool sendingActive   = audioProcessor.isSendingActive();
@@ -1035,11 +990,6 @@ void ADM_OSC_Music_PannerAudioProcessorEditor::timerCallback()
 
     if (sendStatusLight != nullptr)
         sendStatusLight->setActive (sendingActive);
-
-    receiveStatusLabel.setColour (juce::Label::textColourId,
-                                  Palette::textPrimary.withAlpha (receivingActive ? 0.95f : 0.4f));
-    sendStatusLabel.setColour (juce::Label::textColourId,
-                               Palette::textPrimary.withAlpha (sendingActive ? 0.95f : 0.4f));
 
     refreshSendHostEditor();
     refreshObjectEditor();

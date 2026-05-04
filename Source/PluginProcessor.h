@@ -3,7 +3,6 @@
 #include <juce_audio_processors/juce_audio_processors.h>
 #include <juce_osc/juce_osc.h>
 #include <atomic>
-#include <optional>
 
 namespace ParameterIDs
 {
@@ -15,9 +14,6 @@ namespace ParameterIDs
     static constexpr auto distance    = "distance";
     static constexpr auto receivePort       = "receivePort";
     static constexpr auto sendPort          = "sendPort";
-    static constexpr auto circleEnabled     = "circleEnabled";
-    static constexpr auto circleRadius      = "circleRadius";
-    static constexpr auto circleSubdivision = "circleSubdivision";
     static constexpr auto objectNumber      = "objectNumber";
     static constexpr auto sendHost          = "sendHost";
     static constexpr auto oscInputEnabled   = "oscInputEnabled";
@@ -79,10 +75,6 @@ public:
     OscCoordinateFormat getOscInputFormat() const noexcept;
     OscCoordinateFormat getOscOutputFormat() const noexcept;
     juce::String getOscInputHubStatusText() const;
-    std::optional<double> getCurrentBpm() const;
-    bool isCircleMotionEnabled() const noexcept { return circleEnabled.load (std::memory_order_acquire); }
-    float getCircleRadiusValue() const noexcept { return circleRadius.load (std::memory_order_acquire); }
-    int getCircleSubdivisionIndex() const noexcept { return circleSubdivisionIndex.load (std::memory_order_acquire); }
     int getObjectNumber() const noexcept { return objectNumber.load (std::memory_order_acquire); }
     juce::String getSendHost() const;
     void setSendHost (juce::String newHost);
@@ -114,11 +106,10 @@ private:
     void refreshSharedOscHubRoute();
     void configureSender();
     void sendPositionOscIfChanged();
-    void updateCircularMotion();
+    void requestRemotePositionSnapshot();
     static double getSeconds() noexcept;
     void updatePositionFromOSC (float x, float y, float z);
     void syncPolarParametersFromCartesian();
-    void updateTransportInfo();
 
     juce::AudioProcessorValueTreeState parameters;
 
@@ -128,24 +119,17 @@ private:
     std::atomic<float> currentY { 0.0f };
     std::atomic<float> currentZ { 0.0f };
 
-    std::atomic<int> currentReceivePort { 9000 };
-    std::atomic<int> currentSendPort    { 9001 };
+    std::atomic<int> currentReceivePort { 4001 };
+    std::atomic<int> currentSendPort    { 4001 };
 
     std::atomic<bool> portsDirty { false };
     std::atomic<bool> positionDirty { true };
     std::atomic<double> lastReceiveTimeSeconds { 0.0 };
     std::atomic<double> lastSendTimeSeconds { 0.0 };
-    std::atomic<double> currentBpm { 120.0 };
-    std::atomic<bool> bpmValid { false };
-    std::atomic<bool> circleEnabled { false };
     std::atomic<bool> oscInputEnabled { true };
     std::atomic<bool> oscOutputEnabled { true };
     std::atomic<int> oscInputFormat { static_cast<int> (OscCoordinateFormat::cartesian) };
     std::atomic<int> oscOutputFormat { static_cast<int> (OscCoordinateFormat::cartesian) };
-    std::atomic<float> circleRadius { 0.3f };
-    std::atomic<double> circleStartTimeSeconds { 0.0 };
-    std::atomic<double> circlePhaseOffset { 0.0 };
-    std::atomic<int>    circleSubdivisionIndex { 0 };
     std::atomic<int>    objectNumber { 1 };
     mutable juce::CriticalSection hostLock;
     juce::String currentSendHost { "127.0.0.1" };

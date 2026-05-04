@@ -10,8 +10,8 @@ namespace
 {
     constexpr int minOscPort = 1024;
     constexpr int maxOscPort = 65535;
-    constexpr int defaultReceivePort = 9000;
-    constexpr int defaultSendPort    = 9001;
+    constexpr int defaultReceivePort = 4001;
+    constexpr int defaultSendPort    = 4001;
     constexpr float maxDistanceValue = 1.0f;
     constexpr float parameterWriteEpsilon = 1.0e-4f;
 
@@ -125,7 +125,10 @@ namespace
             Route sub;
             sub.instanceKey = key;
             sub.objectId = objectId;
-            sub.order = ++nextRegistrationOrder;
+            if (auto it = subscriptions.find (key); it != subscriptions.end())
+                sub.order = it->second.order;
+            else
+                sub.order = ++nextRegistrationOrder;
             sub.preferredListenPort = juce::jlimit (minOscPort, maxOscPort, preferredListenPort);
             sub.callback = std::move (callback);
             subscriptions[key] = std::move (sub);
@@ -383,12 +386,7 @@ ADM_OSC_Music_PannerAudioProcessor::ADM_OSC_Music_PannerAudioProcessor()
     currentX.store (parameters.getRawParameterValue (ParameterIDs::posX)->load());
     currentY.store (parameters.getRawParameterValue (ParameterIDs::posY)->load());
     currentZ.store (parameters.getRawParameterValue (ParameterIDs::posZ)->load());
-    circleEnabled.store (parameters.getRawParameterValue (ParameterIDs::circleEnabled)->load() >= 0.5f);
-    circleRadius.store (parameters.getRawParameterValue (ParameterIDs::circleRadius)->load());
-    circleSubdivisionIndex.store (juce::roundToInt (parameters.getRawParameterValue (ParameterIDs::circleSubdivision)->load()));
     objectNumber.store (juce::jlimit (1, 128, juce::roundToInt (parameters.getRawParameterValue (ParameterIDs::objectNumber)->load())));
-    circleStartTimeSeconds.store (getSeconds());
-    circlePhaseOffset.store (std::atan2 (currentY.load(), currentX.load()));
 
     auto& stateTree = parameters.state;
 
@@ -415,9 +413,6 @@ ADM_OSC_Music_PannerAudioProcessor::ADM_OSC_Music_PannerAudioProcessor()
 
     stateTree.setProperty (ParameterIDs::receivePort, currentReceivePort.load(), nullptr);
     stateTree.setProperty (ParameterIDs::sendPort, currentSendPort.load(), nullptr);
-    stateTree.setProperty (ParameterIDs::circleEnabled, circleEnabled.load(), nullptr);
-    stateTree.setProperty (ParameterIDs::circleRadius, circleRadius.load(), nullptr);
-    stateTree.setProperty (ParameterIDs::circleSubdivision, circleSubdivisionIndex.load(), nullptr);
     stateTree.setProperty (ParameterIDs::objectNumber, objectNumber.load(), nullptr);
     stateTree.setProperty (ParameterIDs::sendHost, currentSendHost, nullptr);
     stateTree.setProperty (ParameterIDs::oscInputEnabled, oscInputEnabled.load(), nullptr);
@@ -426,8 +421,7 @@ ADM_OSC_Music_PannerAudioProcessor::ADM_OSC_Music_PannerAudioProcessor()
     stateTree.setProperty (ParameterIDs::oscOutputFormat, oscOutputFormat.load(), nullptr);
 
     for (auto& id : { ParameterIDs::posX, ParameterIDs::posY, ParameterIDs::posZ,
-                      ParameterIDs::circleEnabled, ParameterIDs::circleRadius,
-                      ParameterIDs::circleSubdivision, ParameterIDs::objectNumber })
+                      ParameterIDs::objectNumber })
     {
         parameters.addParameterListener (id, this);
     }
@@ -436,6 +430,7 @@ ADM_OSC_Music_PannerAudioProcessor::ADM_OSC_Music_PannerAudioProcessor()
 
     registerWithSharedOscHub();
     configureSender();
+    requestRemotePositionSnapshot();
 
     startTimerHz (50);
 }
@@ -448,8 +443,7 @@ ADM_OSC_Music_PannerAudioProcessor::~ADM_OSC_Music_PannerAudioProcessor()
     oscSender.disconnect();
 
     for (auto& id : { ParameterIDs::posX, ParameterIDs::posY, ParameterIDs::posZ,
-                      ParameterIDs::circleEnabled, ParameterIDs::circleRadius,
-                      ParameterIDs::circleSubdivision, ParameterIDs::objectNumber })
+                      ParameterIDs::objectNumber })
     {
         parameters.removeParameterListener (id, this);
     }
@@ -497,7 +491,6 @@ void ADM_OSC_Music_PannerAudioProcessor::processBlock (juce::AudioBuffer<float>&
     juce::ScopedNoDenormals noDenormals;
     juce::ignoreUnused (midiMessages);
 
-    updateTransportInfo();
     clearExtraOutputChannels (buffer, getTotalNumInputChannels());
 }
 
@@ -507,7 +500,6 @@ void ADM_OSC_Music_PannerAudioProcessor::processBlock (juce::AudioBuffer<double>
     juce::ScopedNoDenormals noDenormals;
     juce::ignoreUnused (midiMessages);
 
-    updateTransportInfo();
     clearExtraOutputChannels (buffer, getTotalNumInputChannels());
 }
 
@@ -543,9 +535,6 @@ void ADM_OSC_Music_PannerAudioProcessor::setStateInformation (const void* data, 
         currentX.store (parameters.getRawParameterValue (ParameterIDs::posX)->load());
         currentY.store (parameters.getRawParameterValue (ParameterIDs::posY)->load());
         currentZ.store (parameters.getRawParameterValue (ParameterIDs::posZ)->load());
-        circleEnabled.store (parameters.getRawParameterValue (ParameterIDs::circleEnabled)->load() >= 0.5f);
-        circleRadius.store (parameters.getRawParameterValue (ParameterIDs::circleRadius)->load());
-        circleSubdivisionIndex.store (juce::roundToInt (parameters.getRawParameterValue (ParameterIDs::circleSubdivision)->load()));
         objectNumber.store (juce::jlimit (1, 128, juce::roundToInt (parameters.getRawParameterValue (ParameterIDs::objectNumber)->load())));
         {
             const juce::ScopedLock sl (hostLock);
@@ -565,9 +554,6 @@ void ADM_OSC_Music_PannerAudioProcessor::setStateInformation (const void* data, 
         parameters.state.setProperty (ParameterIDs::oscOutputEnabled, oscOutputEnabled.load(), nullptr);
         parameters.state.setProperty (ParameterIDs::oscInputFormat, oscInputFormat.load(), nullptr);
         parameters.state.setProperty (ParameterIDs::oscOutputFormat, oscOutputFormat.load(), nullptr);
-        circleStartTimeSeconds.store (getSeconds());
-        circlePhaseOffset.store (std::atan2 (currentY.load(), currentX.load()));
-
         syncPolarParametersFromCartesian();
         refreshSharedOscHubRoute();
         setReceivePort (static_cast<int> (parameters.state.getProperty (ParameterIDs::receivePort, defaultReceivePort)));
@@ -580,7 +566,6 @@ void ADM_OSC_Music_PannerAudioProcessor::setStateInformation (const void* data, 
 //==============================================================================
 void ADM_OSC_Music_PannerAudioProcessor::timerCallback()
 {
-    updateCircularMotion();
     sendPositionOscIfChanged();
 }
 
@@ -610,25 +595,11 @@ void ADM_OSC_Music_PannerAudioProcessor::parameterChanged (const juce::String& p
         positionDirty.store (true, std::memory_order_release);
         syncPolarParametersFromCartesian();
     }
-    else if (parameterID == ParameterIDs::circleEnabled)
-    {
-        circleEnabled.store (newValue >= 0.5f, std::memory_order_release);
-        circleStartTimeSeconds.store (getSeconds(), std::memory_order_release);
-        circlePhaseOffset.store (std::atan2 (currentY.load(), currentX.load()), std::memory_order_release);
-    }
-    else if (parameterID == ParameterIDs::circleRadius)
-    {
-        circleRadius.store (newValue, std::memory_order_release);
-    }
-    else if (parameterID == ParameterIDs::circleSubdivision)
-    {
-        circleSubdivisionIndex.store (juce::roundToInt (newValue), std::memory_order_release);
-        circleStartTimeSeconds.store (getSeconds(), std::memory_order_release);
-    }
     else if (parameterID == ParameterIDs::objectNumber)
     {
         objectNumber.store (juce::jlimit (1, 128, juce::roundToInt (newValue)), std::memory_order_release);
         refreshSharedOscHubRoute();
+        requestRemotePositionSnapshot();
     }
 }
 
@@ -660,17 +631,6 @@ juce::AudioProcessorValueTreeState::ParameterLayout ADM_OSC_Music_PannerAudioPro
     params.push_back (std::make_unique<juce::AudioParameterFloat> (
         ParameterIDs::distance, "Distance",
         juce::NormalisableRange<float> (0.0f, maxDistanceValue, 0.001f), 0.0f));
-
-    params.push_back (std::make_unique<juce::AudioParameterBool> (
-        ParameterIDs::circleEnabled, "Circle Enabled", false));
-
-    params.push_back (std::make_unique<juce::AudioParameterFloat> (
-        ParameterIDs::circleRadius, "Circle Radius",
-        juce::NormalisableRange<float> (0.0f, 1.0f, 0.001f), 0.3f));
-
-    params.push_back (std::make_unique<juce::AudioParameterChoice> (
-        ParameterIDs::circleSubdivision, "Circle Subdivision",
-        juce::StringArray { "1/1", "1/2", "1/4", "1/8" }, 0));
 
     params.push_back (std::make_unique<juce::AudioParameterInt> (
         ParameterIDs::objectNumber, "Object Number", 1, 128, 1));
@@ -732,6 +692,21 @@ void ADM_OSC_Music_PannerAudioProcessor::configureSender()
 
     if (! oscSender.connect (hostCopy, port))
         DBG ("ADM_OSC_Music_Panner: Failed to connect OSC sender on port " << port);
+}
+
+void ADM_OSC_Music_PannerAudioProcessor::requestRemotePositionSnapshot()
+{
+    if (! oscOutputEnabled.load (std::memory_order_acquire))
+        return;
+
+    const auto objectId = juce::jlimit (1, 128, objectNumber.load (std::memory_order_acquire));
+    const auto inputFormat = getOscInputFormat();
+    const auto queryAddress = inputFormat == OscCoordinateFormat::polar
+                                ? "/adm/obj/" + juce::String (objectId) + "/aed"
+                                : "/adm/obj/" + juce::String (objectId) + "/xyz";
+
+    // Empty-argument OSC message = query (GET) per ADM-OSC convention.
+    oscSender.send (queryAddress.toRawUTF8());
 }
 
 void ADM_OSC_Music_PannerAudioProcessor::sendPositionOscIfChanged()
@@ -804,38 +779,6 @@ void ADM_OSC_Music_PannerAudioProcessor::syncPolarParametersFromCartesian()
     juce::ignoreUnused (az, el, dist);
 }
 
-void ADM_OSC_Music_PannerAudioProcessor::updateCircularMotion()
-{
-    if (! circleEnabled.load (std::memory_order_acquire))
-        return;
-
-    const auto bpmValue = getCurrentBpm().value_or (120.0);
-    const auto now = getSeconds();
-    const auto start = circleStartTimeSeconds.load (std::memory_order_acquire);
-    const auto angleOffset = circlePhaseOffset.load (std::memory_order_acquire);
-    const auto elapsedSeconds = juce::jmax (0.0, now - start);
-
-    const double beats = elapsedSeconds * bpmValue / 60.0;
-    const int subdivisionIndex = juce::jlimit (0, 3, circleSubdivisionIndex.load (std::memory_order_acquire));
-    const double denom = subdivisionIndex == 0 ? 1.0 : (subdivisionIndex == 1 ? 2.0 : (subdivisionIndex == 2 ? 3.0 : 6.0));
-    const double rotations = beats / juce::jmax (0.001, denom);
-    const double angle = angleOffset + juce::MathConstants<double>::twoPi * rotations;
-
-    const float radius = juce::jlimit (0.0f, 1.0f, circleRadius.load (std::memory_order_acquire));
-    const float newX = radius * static_cast<float> (std::cos (angle));
-    const float newY = radius * static_cast<float> (std::sin (angle));
-
-    updateFloatParameterIfNeeded (parameters, ParameterIDs::posX, newX);
-    updateFloatParameterIfNeeded (parameters, ParameterIDs::posY, newY);
-}
-
-std::optional<double> ADM_OSC_Music_PannerAudioProcessor::getCurrentBpm() const
-{
-    if (bpmValid.load (std::memory_order_acquire))
-        return currentBpm.load (std::memory_order_acquire);
-
-    return std::nullopt;
-}
 
 juce::String ADM_OSC_Music_PannerAudioProcessor::getSendHost() const
 {
@@ -864,6 +807,8 @@ void ADM_OSC_Music_PannerAudioProcessor::setSendHost (juce::String newHost)
         parameters.state.setProperty (ParameterIDs::sendHost, currentSendHost, nullptr);
         portsDirty.store (true);
         triggerAsyncUpdate();
+        configureSender();
+        requestRemotePositionSnapshot();
     }
 }
 
@@ -901,34 +846,16 @@ juce::String ADM_OSC_Music_PannerAudioProcessor::getOscInputHubStatusText() cons
         return "OSC Hub: waiting";
 
     if (status.activeListenPort != status.configuredPort)
-        return "OSC Hub active on " + juce::String (status.activeListenPort)
-             + " (this instance configured: " + juce::String (status.configuredPort) + ")";
+        return "OSC Hub active on port " + juce::String (status.activeListenPort)
+             + " (this instance configured: port " + juce::String (status.configuredPort) + ")";
 
     if (status.activePortSubscriberCount <= 1)
-        return "OSC Hub: direct listen on " + juce::String (status.activeListenPort);
+        return "OSC Hub: direct listen on port " + juce::String (status.activeListenPort);
 
     if (status.thisInstanceIsLeader)
         return "OSC Hub: main (" + juce::String (status.activePortSubscriberCount) + " linked instances)";
 
     return "OSC Hub: linked to main (" + juce::String (status.activePortSubscriberCount) + " instances)";
-}
-
-void ADM_OSC_Music_PannerAudioProcessor::updateTransportInfo()
-{
-    if (auto* playHead = getPlayHead())
-    {
-        if (auto position = playHead->getPosition())
-        {
-            if (auto bpm = position->getBpm(); bpm.hasValue() && *bpm > 0.0)
-            {
-                currentBpm.store (*bpm, std::memory_order_release);
-                bpmValid.store (true, std::memory_order_release);
-                return;
-            }
-        }
-    }
-
-    bpmValid.store (false, std::memory_order_release);
 }
 
 bool ADM_OSC_Music_PannerAudioProcessor::isReceivingActive() const
@@ -979,7 +906,12 @@ void ADM_OSC_Music_PannerAudioProcessor::setReceivePort (int newPort)
     parameters.state.setProperty (ParameterIDs::receivePort, newPort, nullptr);
 
     if (previous != newPort)
+    {
+        // Keep this instance's shared-hub subscription in sync with its latest receive port.
+        refreshSharedOscHubRoute();
         SharedOscInputHub::get().setListenPort (newPort);
+        requestRemotePositionSnapshot();
+    }
 }
 
 void ADM_OSC_Music_PannerAudioProcessor::setOscInputFormat (OscCoordinateFormat format)
@@ -987,7 +919,10 @@ void ADM_OSC_Music_PannerAudioProcessor::setOscInputFormat (OscCoordinateFormat 
     const int value = juce::jlimit (0, 1, static_cast<int> (format));
     const int previous = oscInputFormat.exchange (value, std::memory_order_acq_rel);
     if (previous != value)
+    {
         parameters.state.setProperty (ParameterIDs::oscInputFormat, value, nullptr);
+        requestRemotePositionSnapshot();
+    }
 }
 
 void ADM_OSC_Music_PannerAudioProcessor::setOscOutputFormat (OscCoordinateFormat format)
@@ -1008,6 +943,8 @@ void ADM_OSC_Music_PannerAudioProcessor::setSendPort (int newPort)
     {
         portsDirty.store (true);
         triggerAsyncUpdate();
+        configureSender();
+        requestRemotePositionSnapshot();
     }
 }
 
