@@ -61,7 +61,8 @@ Restart your DAW after installation.
 
 ## License
 
-Closed source — all rights reserved. 
+This project is licensed under the GNU General Public License v3.0 (GPL-3.0).  
+See [`LICENSE.md`](LICENSE.md) for the full license text.
 
 ---
 
