@@ -61,8 +61,12 @@ Restart your DAW after installation.
 
 ## License
 
-This project is licensed under the GNU General Public License v3.0 (GPL-3.0).  
-See [`LICENSE.md`](LICENSE.md) for the full license text.
+ADM-OSC Panner is open source software released under the GNU General Public License v3.0.
+See [`LICENSE`](LICENSE) for the full license text.
+
+## Beta Disclaimer
+
+ADM-OSC Panner is currently in beta. Use at your own risk. Behavior, compatibility and features may change in future versions.
 
 ---
 
