@@ -21,7 +21,7 @@ Receive, transmit and record ADM-OSC messages from any compatible DAW. Designed 
 
 - macOS 12 or later
 - Apple Silicon (ARM) — M1/M2/M3/M4
-- Compatible DAW (Pro Tools, Logic Pro, Reaper, Nuendo, etc.)
+- Compatible DAW (Logic Pro, Reaper, Nuendo, etc.)
 
 ## Installation
 
