@@ -94,6 +94,7 @@ public:
 
     void paint (juce::Graphics& g) override;
     void resized() override;
+    void mouseDown (const juce::MouseEvent& event) override;
 
 private:
     ADM_OSC_Music_PannerAudioProcessor& audioProcessor;
@@ -104,8 +105,10 @@ private:
     std::vector<std::unique_ptr<juce::Label>> mapLabels;
 
     // === HEADER ===
+    juce::Label betaLabel;
     juce::Label titleLabel;
     juce::Label companyLabel;
+    juce::HyperlinkButton pierrotLink { "PierrotAudioTools", juce::URL ("https://github.com/PierrotAudioTools") };
     juce::Label tabOscLabel;
     juce::Label tabFxLabel;
     juce::Label tabSettingsLabel;
@@ -139,8 +142,12 @@ private:
     juce::Label mapsSectionLabel;
 
     class StatusLight;
+    class ClickHotspot;
     std::unique_ptr<StatusLight> receiveStatusLight;
     std::unique_ptr<StatusLight> sendStatusLight;
+    std::unique_ptr<ClickHotspot> receiveToggleHitbox;
+    std::unique_ptr<ClickHotspot> sendPortToggleHitbox;
+    std::unique_ptr<ClickHotspot> sendHostToggleHitbox;
 
     // === CONTROL ===
     juce::Label controlTitle;
@@ -182,6 +189,7 @@ private:
     void refreshObjectEditor();
     void refreshOscFormatEditors();
     void updateOscEnablementUI();
+    void dismissEditorsIfNeeded (juce::Component* clickedComponent);
     void timerCallback() override;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ADM_OSC_Music_PannerAudioProcessorEditor)

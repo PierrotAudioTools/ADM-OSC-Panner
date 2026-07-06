@@ -113,6 +113,20 @@ public:
     }
 };
 
+void CircleIconComponent::paint (juce::Graphics& g)
+{
+    auto bounds = getLocalBounds().toFloat().reduced (1.0f);
+    g.setColour (Palette::textSecondary.withAlpha (0.75f));
+    g.drawEllipse (bounds, 1.2f);
+
+    auto centre = bounds.getCentre();
+    g.drawLine (bounds.getX(), centre.y, bounds.getRight(), centre.y, 1.0f);
+    g.drawLine (centre.x, bounds.getY(), centre.x, bounds.getBottom(), 1.0f);
+
+    g.setColour (Palette::panPoint.withAlpha (0.9f));
+    g.fillEllipse (centre.x - 2.5f, centre.y - 2.5f, 5.0f, 5.0f);
+}
+
 //==============================================================================
 PositionDisplay::PositionDisplay (ADM_OSC_Music_PannerAudioProcessor& p)
     : processor (p), state (p.getValueTreeState())

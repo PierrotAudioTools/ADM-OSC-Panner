@@ -3,8 +3,8 @@
 ADM OSC spammer (no external dependencies).
 
 Examples:
-  python3 tools/adm_osc_spammer.py --port 9000 --object-id 1 --format xyz --rate 200
-  python3 tools/adm_osc_spammer.py --port 9000 --object-id 1 --format aed --rate 200 --mode sine
+    python3 tools/adm_osc_spammer.py --port 4001 --object-id 1 --format xyz --rate 200
+    python3 tools/adm_osc_spammer.py --port 4001 --object-id 1 --format aed --rate 200 --mode sine
 """
 
 from __future__ import annotations
@@ -79,7 +79,7 @@ def make_aed(t: float, mode: str) -> tuple[float, float, float]:
 def main() -> int:
     parser = argparse.ArgumentParser(description="Spam ADM OSC xyz/aed to stress-test a receiver.")
     parser.add_argument("--host", default="127.0.0.1", help="Target host (default: 127.0.0.1)")
-    parser.add_argument("--port", type=int, default=9000, help="Target UDP port (default: 9000)")
+    parser.add_argument("--port", type=int, default=4001, help="Target UDP port (default: 4001)")
     parser.add_argument("--object-id", type=int, default=1, help="ADM object id (default: 1)")
     parser.add_argument("--format", choices=("xyz", "aed"), default="xyz", help="OSC address format")
     parser.add_argument(
