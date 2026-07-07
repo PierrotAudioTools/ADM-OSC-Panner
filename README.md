@@ -1,17 +1,17 @@
 # ADM-OSC Panner
 
-**VST3 / AU plugin for macOS Apple Silicon**
+## VST3 / AU plugin for macOS and Windows
 
 Receive, transmit and record ADM-OSC messages from any compatible DAW. Designed for immersive audio workflows using the [ADM-OSC](https://immersive-audio-live.github.io/ADM-OSC/) open protocol.
 
-<img src="Assets/ADM-OSC%20Panner-fullview.png" width="400" alt="ADM-OSC Panner" />
+![ADM-OSC Panner](Assets/ADM-OSC%20Panner-fullview.png)
 
 ---
 
 ## Features
 
-- **OSC input** — Create an ADM-OSC Server (default: 9000)
-- **OSC output** — send to any IP and port (default: 127.0.0.1:9001)
+- **OSC input** — Create an ADM-OSC Server (default: 4001)
+- **OSC output** — send to any IP and port (default: 127.0.0.1:4001)
 - **ADM-OSC protocol** — Cartesian and Polar coordinate formats
 - **Object-based positioning** — per-object XYZ control
 - **Visual panner** — real-time Top View and Rear View display
@@ -23,12 +23,19 @@ Receive, transmit and record ADM-OSC messages from any compatible DAW. Designed 
 - Apple Silicon (ARM) — M1/M2/M3/M4
 - Compatible DAW (Logic Pro, Reaper, Nuendo, etc.)
 
+### Windows build requirements
+
+- Windows 10 or later
+- Visual Studio 2022 Build Tools or Visual Studio 2022 with C++ support
+- CMake 3.20 or later
+- A VST3-compatible DAW such as Reaper, Cubase or Nuendo
+
 ## Installation
 
 Download the installer from the [Releases](../../releases) page:
 
 | Installer | Format |
-|-----------|--------|
+| --------- | ------ |
 | `ADM-OSC Panner … AU.pkg` | Audio Unit (AU) only |
 | `ADM-OSC Panner … VST3.pkg` | VST3 only |
 | `ADM-OSC Panner … AU-VST3.pkg` | AU + VST3 |
@@ -40,11 +47,45 @@ Double-click the `.pkg` file and follow the installer steps. The plugin is insta
 
 Restart your DAW after installation.
 
+## Building on Windows
+
+This repository can build a Windows VST3 plugin with CMake and Visual Studio 2022.
+
+### Configure
+
+```powershell
+cmake -S . -B build-win -G "Visual Studio 17 2022" -A x64
+```
+
+### Build
+
+```powershell
+cmake --build build-win --config Release --target ADM_OSC_Music_Panner_VST3
+```
+
+### Build output
+
+The built plugin is generated here:
+
+```text
+build-win/ADM_OSC_Music_Panner_artefacts/Release/VST3/ADM-OSC Panner.vst3
+```
+
+### Install on Windows
+
+Copy the built `.vst3` bundle to:
+
+```text
+C:\Program Files\Common Files\VST3\
+```
+
+Administrator permission may be required to copy into that folder. Restart your DAW after installation.
+
 ## Usage
 
 1. Insert **ADM-OSC Panner** on any audio track
-2. Set **OSC In Port** to the port your source is sending to (default: 9000)
-3. Set **OSC Out IP / Port** to your destination (default: 127.0.0.1:9001)
+2. Set **OSC In Port** to the port your source is sending to (default: 4001)
+3. Set **OSC Out IP / Port** to your destination (default: 127.0.0.1:4001)
 4. Select the **Object** number
 5. Move the XYZ position — the Top and Rear views update in real time
 6. Automate X, Y, Z in your DAW timeline to record and playback movement
@@ -54,9 +95,21 @@ Restart your DAW after installation.
 
 ## OSC Address Format
 
-```
-**CARTESIAN** : /adm/obj/<id>/xyz  x y z
-**POLAR** : /adm/obj/<id>/aed a e d
+Supported OSC input/output address variants:
+
+```text
+CARTESIAN
+/adm/obj/<id>/x      x
+/adm/obj/<id>/y      y
+/adm/obj/<id>/z      z
+/adm/obj/<id>/xy     x y
+/adm/obj/<id>/xyz    x y z
+
+POLAR
+/adm/obj/<id>/a      a
+/adm/obj/<id>/e      e
+/adm/obj/<id>/d      d
+/adm/obj/<id>/aed    a e d
 ```
 
 ## License

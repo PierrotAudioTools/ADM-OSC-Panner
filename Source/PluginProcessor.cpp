@@ -85,7 +85,7 @@ namespace
         return false;
     }
 
-    class SharedOscInputHub final : private juce::OSCReceiver::Listener<juce::OSCReceiver::MessageLoopCallback>
+    class SharedOscInputHub final : private juce::OSCReceiver::Listener<juce::OSCReceiver::RealtimeCallback>
     {
     public:
         struct InstanceStatus
@@ -96,6 +96,14 @@ namespace
             bool thisInstanceOnActivePort { false };
             bool thisInstanceExists { false };
             bool thisInstanceIsLeader { false };
+            bool receiverConnected { false };
+            uint64_t totalPacketCount { 0 };
+            uint64_t admPacketCount { 0 };
+            uint64_t thisInstanceDeliveryCount { 0 };
+            juce::String lastAddress;
+            int lastObjectId { 0 };
+            juce::String lastAxis;
+            int lastArgCount { 0 };
         };
 
         static SharedOscInputHub& get()
@@ -162,6 +170,13 @@ namespace
 
             const juce::ScopedLock sl (lock);
             status.activeListenPort = listenPort;
+            status.receiverConnected = receiverConnected;
+            status.totalPacketCount = totalPacketCount;
+            status.admPacketCount = admPacketCount;
+            status.lastAddress = lastAddress;
+            status.lastObjectId = lastObjectId;
+            status.lastAxis = lastAxis;
+            status.lastArgCount = lastArgCount;
 
             uint64_t leaderOrder = std::numeric_limits<uint64_t>::max();
             uint64_t thisOrder = std::numeric_limits<uint64_t>::max();
@@ -182,6 +197,9 @@ namespace
                     status.thisInstanceOnActivePort = (sub.preferredListenPort == listenPort);
                 }
             }
+
+            if (auto it = deliveredByInstance.find (key); it != deliveredByInstance.end())
+                status.thisInstanceDeliveryCount = it->second;
 
             status.thisInstanceIsLeader = status.thisInstanceOnActivePort && thisOrder == leaderOrder;
             return status;
@@ -209,10 +227,21 @@ namespace
 
         void oscMessageReceived (const juce::OSCMessage& message) override
         {
+            {
+                const juce::ScopedLock sl (lock);
+                ++totalPacketCount;
+                lastAddress = message.getAddressPattern().toString();
+            }
+
             const auto address = message.getAddressPattern().toString();
             static constexpr auto prefix = "/adm/obj/";
             if (! address.startsWith (prefix))
                 return;
+
+            {
+                const juce::ScopedLock sl (lock);
+                ++admPacketCount;
+            }
 
             auto remainder = address.substring (juce::String (prefix).length());
             const auto slashPos = remainder.indexOfChar ('/');
@@ -220,13 +249,23 @@ namespace
                 return;
 
             const auto objectText = remainder.substring (0, slashPos);
-            const auto axis = remainder.substring (slashPos + 1);
+            auto axis = remainder.substring (slashPos + 1);
             if (axis.isEmpty())
                 return;
+
+            if (const auto axisSlash = axis.indexOfChar ('/'); axisSlash > 0)
+                axis = axis.substring (0, axisSlash);
 
             const int objectId = objectText.getIntValue();
             if (objectId < 1 || objectId > 128)
                 return;
+
+            {
+                const juce::ScopedLock sl (lock);
+                lastObjectId = objectId;
+                lastAxis = axis;
+                lastArgCount = message.size();
+            }
 
             std::vector<std::function<void (float, float, float, bool)>> callbacks;
             float x = 0.0f;
@@ -244,21 +283,32 @@ namespace
 
                 if (axis == "xyz")
                 {
-                    if (message.size() < 2)
+                    if (message.size() < 1)
                         return;
 
                     state.x = static_cast<float> (readOscNumeric (message[0], state.x));
-                    state.y = static_cast<float> (readOscNumeric (message[1], state.y));
+                    if (message.size() > 1)
+                        state.y = static_cast<float> (readOscNumeric (message[1], state.y));
                     if (message.size() > 2)
                         state.z = static_cast<float> (readOscNumeric (message[2], state.z));
                 }
+                else if (axis == "xy")
+                {
+                    if (message.size() < 1)
+                        return;
+
+                    state.x = static_cast<float> (readOscNumeric (message[0], state.x));
+                    if (message.size() > 1)
+                        state.y = static_cast<float> (readOscNumeric (message[1], state.y));
+                }
                 else if (axis == "aed")
                 {
-                    if (message.size() < 2)
+                    if (message.size() < 1)
                         return;
 
                     state.azimuth = static_cast<float> (readOscNumeric (message[0], state.azimuth));
-                    state.elevation = static_cast<float> (readOscNumeric (message[1], state.elevation));
+                    if (message.size() > 1)
+                        state.elevation = static_cast<float> (readOscNumeric (message[1], state.elevation));
                     if (message.size() > 2)
                         state.distance = static_cast<float> (readOscNumeric (message[2], state.distance));
 
@@ -312,7 +362,7 @@ namespace
                     return;
                 }
 
-                if (axis == "xyz" || axis == "x" || axis == "y" || axis == "z")
+                if (axis == "xyz" || axis == "xy" || axis == "x" || axis == "y" || axis == "z")
                     cartesianToPolar (state.x, state.y, state.z, state.azimuth, state.elevation, state.distance);
 
                 callbacks.reserve (routeIt->second.size());
@@ -327,6 +377,13 @@ namespace
             {
                 if (callback)
                     callback (x, y, z, isPolar);
+            }
+
+            const juce::ScopedLock sl (lock);
+            if (const auto routeIt = routes.find (objectId); routeIt != routes.end())
+            {
+                for (const auto& route : routeIt->second)
+                    ++deliveredByInstance[route.instanceKey];
             }
         }
 
@@ -375,6 +432,13 @@ namespace
         std::unordered_map<void*, Route> subscriptions;
         uint64_t nextRegistrationOrder { 0 };
         std::unordered_map<int, ObjectState> objectStates;
+        uint64_t totalPacketCount { 0 };
+        uint64_t admPacketCount { 0 };
+        std::unordered_map<void*, uint64_t> deliveredByInstance;
+        juce::String lastAddress;
+        int lastObjectId { 0 };
+        juce::String lastAxis;
+        int lastArgCount { 0 };
     };
 }
 
@@ -659,12 +723,6 @@ void ADM_OSC_Music_PannerAudioProcessor::refreshSharedOscHubRoute()
             if (! oscInputEnabled.load (std::memory_order_acquire))
                 return;
 
-            const auto inputFormat = getOscInputFormat();
-            if (inputFormat == OscCoordinateFormat::cartesian && isPolar)
-                return;
-            if (inputFormat == OscCoordinateFormat::polar && ! isPolar)
-                return;
-
             lastReceiveTimeSeconds.store (getSeconds(), std::memory_order_release);
             juce::ignoreUnused (isPolar);
             updatePositionFromOSC (x, y, z);
@@ -843,19 +901,25 @@ juce::String ADM_OSC_Music_PannerAudioProcessor::getOscInputHubStatusText() cons
                                                                      configuredPort);
 
     if (! status.thisInstanceExists)
-        return "OSC Hub: waiting";
+       return "OSC Input: waiting";
+
+    if (! status.receiverConnected)
+       return "OSC Input: cannot bind port " + juce::String (status.activeListenPort)
+           + " (busy or blocked)";
 
     if (status.activeListenPort != status.configuredPort)
-        return "OSC Hub active on port " + juce::String (status.activeListenPort)
-             + " (this instance configured: port " + juce::String (status.configuredPort) + ")";
+       return "OSC Input Hub: listening on port " + juce::String (status.activeListenPort)
+           + " (this instance set to port " + juce::String (status.configuredPort) + ")";
 
     if (status.activePortSubscriberCount <= 1)
-        return "OSC Hub: direct listen on port " + juce::String (status.activeListenPort);
+       return "OSC Input: listening on port " + juce::String (status.activeListenPort);
 
     if (status.thisInstanceIsLeader)
-        return "OSC Hub: main (" + juce::String (status.activePortSubscriberCount) + " linked instances)";
+       return "OSC Input Hub: main listener (" + juce::String (status.activePortSubscriberCount)
+           + " linked instances)";
 
-    return "OSC Hub: linked to main (" + juce::String (status.activePortSubscriberCount) + " instances)";
+    return "OSC Input Hub: linked to main listener (" + juce::String (status.activePortSubscriberCount)
+        + " instances)";
 }
 
 bool ADM_OSC_Music_PannerAudioProcessor::isReceivingActive() const
